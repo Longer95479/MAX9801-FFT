@@ -12,12 +12,79 @@
 -------------------------------------------------------------------------------------------------------*/
 #include "include.h"
 
-
+type_complex sample_s[_N], sample_d[_N], z[_N];
 int main(void) 
 {
-    PLL_Init(PLL180);         //初始化PLL为180M 
+   PLL_Init(PLL180);                   //初始化PLL为180M 
     
-    while(1);
+    /* 设置中断优先级组  0: 0个抢占优先级16位个子优先级 
+     * 1: 2个抢占优先级 8个子优先级 2: 4个抢占优先级 4个子优先级 
+     * 3: 8个抢占优先级 2个子优先级 4: 16个抢占优先级 0个子优先级
+     */
+    /* 配置优先级组 2: 4个抢占优先级 4个子优先级 */
+    NVIC_SetPriorityGrouping(0x07 - 2);
+    
+    /* 优先级配置 抢占优先级0  子优先级2   越小优先级越高  抢占优先级可打断别的中断 */
+    NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));
+    
+    LED_Init();
+    
+    LPTMR_PulseInit(LPT0_ALT1,32768,LPT_Rising);  
+    systime.init(); 
+    
+    UART_Init(UART4, 115200);           //用于显示波形
+    
+    ADC_Init(ADC1);                    //ADC1初始化
+    
+    int time;
+    
+    type_complex *Wnk_fft, *Wnk_ifft;
+    Wnk_fft = init_Wnk(fft, _N);
+    Wnk_ifft = init_Wnk(ifft, _N);
+    
+    for(int i = 0; i < _N; i++) {
+        sample_s[i].re = 0;
+        sample_s[i].im = 0;
+        sample_d[i].re = 0;
+        sample_d[i].im = 0;
+      }
+    
+    while(1) {
+      
+      LPTMR_TimeStartus();
+      for(int i = 0; i < _N/2; i++) {
+        sample_s[i].re = (uint16_t)(ADC_Get(0)*0.806);  //PTB4, ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Get(1)*0.806);  //PTB5
+        systime.delay_us(158);                    //延时以控制采样频率，目前是200us采集一次数据
+      }
+      
+      
+      FFT(sample_s, Wnk_fft, _N);      
+      FFT(sample_d, Wnk_fft, _N);
+      
+      for (int i = 0; i < _N; i++) {
+        z[i] = complex_mult(sample_s[i], sample_d[i]);
+      }
+      
+      IFFT(z, Wnk_ifft, _N);
+      
+      int max = 0;
+      for (int i = 1; i < _N; i++)
+        if (z[i].re > z[max].re)
+          max = i;
+      
+      float s = (max - _N + 1) * 340 * 0.000038;
+      
+      time = LPTMR_TimeGetus();
+      
+      /*
+      for(int i = 0; i < _N; i++) 
+        ANO_DT_send_int16(batv1[i], batv2[i], 0, 0, 0, 0, 0, 0);  //这里把数据传给上位机
+      */
+      
+      printf("%d, %f\n", time, s);
+      
+    }
 }
 
 

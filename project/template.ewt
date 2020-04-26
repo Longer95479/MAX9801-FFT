@@ -2384,6 +2384,9 @@
             <name>$PROJ_DIR$\..\Board\soc\ANO_DT.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Board\soc\FFT.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Board\soc\LG_EncTPM.c</name>
         </file>
         <file>

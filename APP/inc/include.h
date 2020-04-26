@@ -53,7 +53,7 @@
 #include "LQ_FLASH.h"              /* FLASH       例子 */
 #include "LQ_CCD.h"                /* CCD         例子 */
 #include "LQ_Ultrasonic.h"         /* 超声波测距  例子 */
-#include "ANO_DT.h"
+
   
 /* 在OLED 上显示或者在TFT1.8显示 */
 #define LQ_OLED     
@@ -64,6 +64,8 @@
                     Longer模块驱动
 ------------------------------------------------------------------*/
 #include "LG_EncTPM.h"             /*TPM编码器    驱动*/
+#include "ANO_DT.h"
+#include "FFT.h"
 
 
 #endif

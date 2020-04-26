@@ -310,7 +310,7 @@ void Test_ANO(void)
     float data3 = 90.0f;   
     float data4 = 135.0f;   
     float data5 = 60.0f;
-    const float PI = 3.1415926;
+    //const float PI = 3.1415926;
 	
 
     while(1)

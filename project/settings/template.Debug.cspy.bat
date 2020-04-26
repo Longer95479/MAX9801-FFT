@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"D:\Longer\IAR_ARM\common\bin\cspybat" -f "D:\Longer\智能车赛\my_programs\BLANK_K66\project\settings\template.Debug.general.xcl" --backend -f "D:\Longer\智能车赛\my_programs\BLANK_K66\project\settings\template.Debug.driver.xcl" 
+"D:\Longer\IAR_ARM\common\bin\cspybat" -f "D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\settings\template.Debug.general.xcl" --backend -f "D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\settings\template.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"D:\Longer\IAR_ARM\common\bin\cspybat" -f "D:\Longer\智能车赛\my_programs\BLANK_K66\project\settings\template.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\Longer\智能车赛\my_programs\BLANK_K66\project\settings\template.Debug.driver.xcl" 
+"D:\Longer\IAR_ARM\common\bin\cspybat" -f "D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\settings\template.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\settings\template.Debug.driver.xcl" 
 
 @echo off 
 :end
