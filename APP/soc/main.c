@@ -42,22 +42,24 @@ int main(void)
     Wnk_fft = init_Wnk(fft, _N);
     Wnk_ifft = init_Wnk(ifft, _N);
     
-    for(int i = 0; i < _N; i++) {
+    
+    
+    while(1) {
+      
+      for(int i = 0; i < _N; i++) {
         sample_s[i].re = 0;
         sample_s[i].im = 0;
         sample_d[i].re = 0;
         sample_d[i].im = 0;
       }
-    
-    while(1) {
       
-      LPTMR_TimeStartus();
+      LPTMR_TimeStartms();
       for(int i = 0; i < _N/2; i++) {
         sample_s[i].re = (uint16_t)(ADC_Get(0)*0.806);  //PTB4, ADC采集，单位是 mv，这行代码执行需要 19us
         sample_d[_N/2-i-1].re = (uint16_t)(ADC_Get(1)*0.806);  //PTB5
-        systime.delay_us(158);                    //延时以控制采样频率，目前是200us采集一次数据
+        systime.delay_us(0); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是200us采集一次数据
       }
-      
+      time = LPTMR_TimeGetms();
       
       FFT(sample_s, Wnk_fft, _N);      
       FFT(sample_d, Wnk_fft, _N);
@@ -69,20 +71,21 @@ int main(void)
       IFFT(z, Wnk_ifft, _N);
       
       int max = 0;
-      for (int i = 1; i < _N; i++)
+      for (int i = _N/2 - 1; i < _N; i++)
         if (z[i].re > z[max].re)
           max = i;
       
-      float s = (max - _N + 1) * 340 * 0.000038;
+      float s = (max - _N/2 + 1) * 340 * 2e-5;
       
-      time = LPTMR_TimeGetus();
       
-      /*
+      IFFT(sample_s, Wnk_ifft, _N);
+      IFFT(sample_d, Wnk_ifft, _N);
+      
       for(int i = 0; i < _N; i++) 
-        ANO_DT_send_int16(batv1[i], batv2[i], 0, 0, 0, 0, 0, 0);  //这里把数据传给上位机
-      */
+        ANO_DT_send_int16(sample_s[i].re, sample_d[i].re, (int16)(s*1000), (max - _N/2 + 1), 0, 0, 0, 0);  //这里把数据传给上位机
       
-      printf("%d, %f\n", time, s);
+      
+      //printf("%d, %f\n", time, s);
       
     }
 }
