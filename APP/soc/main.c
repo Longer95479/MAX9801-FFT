@@ -75,7 +75,7 @@ int main(void)
         if (z[i].re > z[max].re)
           max = i;
       
-      float s = (max - _N/2 + 1) * 340 * 2e-5;
+      float s = (max - _N/2 + 1) * 340 * 1.95e-5;
       
       
       IFFT(sample_s, Wnk_ifft, _N);
