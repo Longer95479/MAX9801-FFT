@@ -57,9 +57,54 @@ int main(void)
       for(int i = 0; i < _N/2; i++) {
         sample_s[i].re = (uint16_t)(ADC_Get(0)*0.806);  //PTB4, ADC采集，单位是 mv，这行代码执行需要 19us
         sample_d[_N/2-i-1].re = (uint16_t)(ADC_Get(1)*0.806);  //PTB5
-        systime.delay_us(0); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是200us采集一次数据
+        systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是200us采集一次数据
       }
       time = LPTMR_TimeGetms();
+    
+      //对波形标准化，寻找均值和最大幅值
+      static int16 max_s[32] = {0}, min_s[32] = {0}, max_d[32] = {0}, min_d[32] = {0};
+      for (int i = 0; i < 32; i++) {
+        for (int j = i * _N/2/32; j < (i+1) * _N/2/32; j++) {
+          
+          if (sample_s[j].re > sample_s[max_s[i]].re)
+            max_s[i] = j;
+          else if (sample_s[j].re < sample_s[min_s[i]].re)
+            min_s[i] = j;
+          
+          if (sample_d[j].re > sample_d[max_d[i]].re)
+            max_d[i] = j;
+          else if (sample_d[j].re < sample_d[min_d[i]].re)
+            min_d[i] = j;
+        }            
+      }
+      
+      static float mean_max_s = 0, mean_min_s = 0, mean_max_d = 0, mean_min_d = 0;
+      mean_max_s = 0, mean_min_s = 0, mean_max_d = 0, mean_min_d = 0;
+      for (int i = 0; i < 32; i++) {
+        mean_max_s = mean_max_s + sample_s[max_s[i]].re;
+        mean_min_s = mean_min_s + sample_s[min_s[i]].re;
+        mean_max_d = mean_max_d + sample_d[max_d[i]].re;
+        mean_min_d = mean_min_d + sample_d[min_d[i]].re;     
+      }
+      
+      mean_max_s = mean_max_s/32;
+      mean_min_s = mean_min_s/32;
+      mean_max_d = mean_max_d/32;
+      mean_min_d = mean_min_d/32;
+      
+      static float amplitude_s, mid_s, amplitude_d, mid_d;
+      amplitude_s = (mean_max_s - mean_min_s) / 2;
+      amplitude_d = (mean_max_d - mean_min_d) / 2;
+      mid_s = (mean_max_s + mean_min_s) / 2;
+      mid_d = (mean_max_d + mean_min_d) / 2;
+      
+      
+      for (int i = 0; i < _N/2; i++) {
+        sample_s[i].re = (sample_s[i].re - mid_s)/amplitude_s;
+        sample_d[i].re = (sample_d[i].re - mid_d)/amplitude_d;
+        
+      }
+      
       
       FFT(sample_s, Wnk_fft, _N);      
       FFT(sample_d, Wnk_fft, _N);
@@ -75,14 +120,14 @@ int main(void)
         if (z[i].re > z[max].re)
           max = i;
       
-      float s = (max - _N/2 + 1) * 343 * 3.9e-5;
+      float s = (max - _N/2 + 1) * 343 * 5e-5;
       
       
       IFFT(sample_s, Wnk_ifft, _N);
       IFFT(sample_d, Wnk_ifft, _N);
       
       for(int i = 0; i < _N; i++) 
-        ANO_DT_send_int16((int16)(10*sample_s[i].re), (int16)(10*sample_d[i].re), (int16)(s*1000), (max - _N/2 + 1), (int16)z[i].re, 0, 0, 0);  //这里把数据传给上位机
+        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (max - _N/2 + 1), (int16)z[i].re, 0, 0, 0);  //这里把数据传给上位机
       
       
       //printf("%d, %f\n", time, s);
