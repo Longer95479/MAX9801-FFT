@@ -18,7 +18,7 @@ type_complex complex_add(type_complex cx1, type_complex cx2);
 type_complex complex_minus(type_complex cx1, type_complex cx2);
 type_complex complex_mult(type_complex cx1, type_complex cx2);
 
-void inver(type_complex x[],int N);
+static void inver(type_complex x[],int N);
 void FFT(type_complex x[], type_complex *Wnk, int N);
 void NIFFT(type_complex x[], type_complex *Wnk, int N);
 void IFFT(type_complex x[], type_complex *Wnk, int N);

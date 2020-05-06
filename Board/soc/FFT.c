@@ -31,7 +31,7 @@ type_complex complex_mult(type_complex cx1, type_complex cx2)
 	return cx_mult;
 }
 
-void inver(type_complex x[],int N)
+static void inver(type_complex x[],int N)
 {
 	int n = (int)log2(N);
 	for (int index = 0; index < N; index++) {
