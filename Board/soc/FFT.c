@@ -159,3 +159,39 @@ void IFFT(type_complex x[], type_complex *Wnk, int N){
 	for(int i = 0; i < N; i++)
 		x[i] = complex_build(x[i].re/N, x[i].im/N);
 }
+
+
+////对波形标准化，寻找均值和最大幅值，数据分成32组分别处理
+void amplitude_and_mean_process(type_complex sample[])
+{
+   static int16 max[32] = {0}, min[32] = {0};
+      for (int i = 0; i < 32; i++) {
+        for (int j = i * _N/2/32; j < (i+1) * _N/2/32; j++) {
+          
+          if (sample[j].re > sample[max[i]].re)
+            max[i] = j;
+          else if (sample[j].re < sample[min[i]].re)
+            min[i] = j;
+          
+        }            
+      }
+      
+      static float mean_max = 0, mean_min = 0;
+      mean_max = 0, mean_min = 0;
+      for (int i = 0; i < 32; i++) {
+        mean_max = mean_max + sample[max[i]].re;
+        mean_min = mean_min + sample[min[i]].re;    
+      }
+      
+      mean_max = mean_max/32;
+      mean_min = mean_min/32;
+      
+      static float amplitude, mid;
+      amplitude = (mean_max - mean_min) / 2;
+      mid = (mean_max + mean_min) / 2;
+      
+      
+      for (int i = 0; i < _N/2; i++) {
+        sample[i].re = (sample[i].re - mid)/amplitude;        
+      }
+}
