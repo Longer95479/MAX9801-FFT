@@ -22,10 +22,14 @@ void inver(type_complex x[],int N);
 void FFT(type_complex x[], type_complex *Wnk, int N);
 void NIFFT(type_complex x[], type_complex *Wnk, int N);
 void IFFT(type_complex x[], type_complex *Wnk, int N);
+
 #ifdef GOBAL
 void init_Wnk(uint8 model, type_complex *Wnk, int N);
 #else
 type_complex *init_Wnk(uint8 model, int N);
 #endif //GOBAL
+
+void amplitude_and_mean_process(type_complex sample[]);
+
 
 #endif
