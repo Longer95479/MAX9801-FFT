@@ -31,6 +31,7 @@ type_complex *init_Wnk(uint8 model, int N);
 
 void amplitude_and_mean_process(type_complex sample[]);
 void filter(type_complex sample[]);
+void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft);
 
 
 #endif

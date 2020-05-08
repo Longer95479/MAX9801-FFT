@@ -203,3 +203,41 @@ void filter(type_complex sample[])
     if (i < 25 || (i > 130 && i < 1917) || i > 2022)
       sample[i].re = 0;
 }
+
+
+void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
+{
+  for(int i = 0; i < _N; i++) {
+        sample_s[i].re = 0;
+        sample_s[i].im = 0;
+        sample_d[i].re = 0;
+        sample_d[i].im = 0;
+      }
+      
+      //LPTMR_TimeStartms();
+      for(int i = 0; i < _N/2; i++) {
+        sample_s[i].re = (uint16_t)(ADC_Get(0)*0.806);  //PTB4, ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Get(1)*0.806);  //PTB5
+        systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是50us采集一次数据
+      }
+      //time = LPTMR_TimeGetms();
+
+      
+      amplitude_and_mean_process(sample_s);
+      amplitude_and_mean_process(sample_d);
+    
+      
+      FFT(sample_s, Wnk_fft, _N);      
+      FFT(sample_d, Wnk_fft, _N);
+      
+      filter(sample_s);
+      filter(sample_d);
+      
+      for (int i = 0; i < _N; i++) {
+        z[i] = complex_mult(sample_s[i], sample_d[i]);
+      }
+      
+      IFFT(z, Wnk_ifft, _N);
+}
+
+

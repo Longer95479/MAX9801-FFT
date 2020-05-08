@@ -41,42 +41,11 @@ int main(void)
     type_complex *Wnk_fft, *Wnk_ifft;
     Wnk_fft = init_Wnk(fft, _N);
     Wnk_ifft = init_Wnk(ifft, _N);
-    
-    
+        
     
     while(1) {
       
-      for(int i = 0; i < _N; i++) {
-        sample_s[i].re = 0;
-        sample_s[i].im = 0;
-        sample_d[i].re = 0;
-        sample_d[i].im = 0;
-      }
-      
-      LPTMR_TimeStartms();
-      for(int i = 0; i < _N/2; i++) {
-        sample_s[i].re = (uint16_t)(ADC_Get(0)*0.806);  //PTB4, ADC采集，单位是 mv，这行代码执行需要 19us
-        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Get(1)*0.806);  //PTB5
-        systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是50us采集一次数据
-      }
-      time = LPTMR_TimeGetms();
-
-      
-      amplitude_and_mean_process(sample_s);
-      amplitude_and_mean_process(sample_d);
-    
-      
-      FFT(sample_s, Wnk_fft, _N);      
-      FFT(sample_d, Wnk_fft, _N);
-      
-      filter(sample_s);
-      filter(sample_d);
-      
-      for (int i = 0; i < _N; i++) {
-        z[i] = complex_mult(sample_s[i], sample_d[i]);
-      }
-      
-      IFFT(z, Wnk_ifft, _N);
+      xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
       
       int max = 0;
       for (int i = 0; i < _N; i++)
@@ -84,14 +53,12 @@ int main(void)
           max = i;
       
       float s = 352 * ((max - _N/2 + 1)  * 5e-5 +  19e-6);
-      
-      
+            
       //IFFT(sample_s, Wnk_ifft, _N);
       //IFFT(sample_d, Wnk_ifft, _N);
       
       for(int i = 0; i < _N; i++) 
-        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (max - _N/2 + 1), (int16)z[i].re, 0, 0, 0);  //这里把数据传给上位机
-      
+        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (max - _N/2 + 1), (int16)z[i].re, 0, 0, 0);  //这里把数据传给上位机      
       
       //printf("%d, %f\n", time, s);
       
