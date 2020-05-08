@@ -195,3 +195,11 @@ void amplitude_and_mean_process(type_complex sample[])
         sample[i].re = (sample[i].re - mid)/amplitude;        
       }
 }
+
+
+void filter(type_complex sample[])
+{
+  for (int i = 0; i < _N; i++)
+    if (i < 25 || (i > 130 && i < 1917) || i > 2022)
+      sample[i].re = 0;
+}

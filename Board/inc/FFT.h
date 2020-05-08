@@ -30,6 +30,7 @@ type_complex *init_Wnk(uint8 model, int N);
 #endif //GOBAL
 
 void amplitude_and_mean_process(type_complex sample[]);
+void filter(type_complex sample[]);
 
 
 #endif
