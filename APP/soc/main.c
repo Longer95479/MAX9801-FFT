@@ -42,6 +42,7 @@ int main(void)
     Wnk_fft = init_Wnk(fft, _N);
     Wnk_ifft = init_Wnk(ifft, _N);
         
+    float V_sound = V_sound_Identification(sample_d, sample_s, z, Wnk_fft, Wnk_ifft); //音速辨识
     
     while(1) {
       
@@ -52,13 +53,13 @@ int main(void)
         if (z[i].re > z[max].re)
           max = i;
       
-      float s = 352 * ((max - _N/2 + 1)  * 5e-5 +  19e-6);
+      float s = V_sound * ((max - _N/2 + 1)  * 5e-5 +  19e-6);
             
-      //IFFT(sample_s, Wnk_ifft, _N);
-      //IFFT(sample_d, Wnk_ifft, _N);
+      IFFT(sample_s, Wnk_ifft, _N);
+      IFFT(sample_d, Wnk_ifft, _N);
       
       for(int i = 0; i < _N; i++) 
-        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (max - _N/2 + 1), (int16)z[i].re, 0, 0, 0);  //这里把数据传给上位机      
+        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
       
       //printf("%d, %f\n", time, s);
       

@@ -240,4 +240,31 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       IFFT(z, Wnk_ifft, _N);
 }
 
+//音速辨识，测量十次。
+float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
+{  
+  static int max[TIMES];
+  
+  for (int i = 0; i < TIMES; i++) {
+    xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
+    
+    max[i] = 0;
+    for (int j = 0; j < _N; j++)
+      if (z[j].re > z[max[i]].re)
+        max[i] = j;
+  }
+  
+  int sum_of_max = 0;
+  for (int i = 0; i < TIMES; i++)
+    sum_of_max += max[i];
+  
+  sum_of_max /= TIMES;
+  
+  float V_sound = DISTANCE / ((sum_of_max - _N/2 + 1)  * 5e-5 +  19e-6);
+  
+  return V_sound;
+  
+  
+}
+
 
