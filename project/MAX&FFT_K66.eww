@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace>
     <project>
-        <path>$WS_DIR$\..\..\ICM20602_K66\project\template.ewp</path>
     </project>
     <project>
         <path>$WS_DIR$\template.ewp</path>
