@@ -46,20 +46,15 @@ int main(void)
     
     while(1) {
       
-      xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
+      float s = distance_difference(V_sound, sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
       
-      int max = 0;
-      for (int i = 0; i < _N; i++)
-        if (z[i].re > z[max].re)
-          max = i;
-      
-      float s = V_sound * ((max - _N/2 + 1)  * 5e-5 +  19e-6);
+      int max = (s / V_sound - 19e-6) / 5e-5 + _N/2 - 1;
             
       IFFT(sample_s, Wnk_ifft, _N);
       IFFT(sample_d, Wnk_ifft, _N);
       
       for(int i = 0; i < _N; i++) 
-        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
+        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (int16)(max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
       
       //printf("%d, %f\n", time, s);
       

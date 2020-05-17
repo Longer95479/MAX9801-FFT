@@ -204,7 +204,7 @@ void filter(type_complex sample[])
       sample[i].re = 0;
 }
 
-
+//r_d - r_s
 void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
 {
   for(int i = 0; i < _N; i++) {
@@ -240,6 +240,19 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       IFFT(z, Wnk_ifft, _N);
 }
 
+//r_d - r_s
+float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
+{
+  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
+      
+      int max = 0;
+      for (int i = 0; i < _N; i++)
+        if (z[i].re > z[max].re)
+          max = i;
+      
+      return V_sound * ((max - _N/2 + 1)  * 5e-5 +  19e-6);
+}
+
 //音速辨识，测量十次。
 float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
 {  
@@ -266,5 +279,8 @@ float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], t
   
   
 }
+
+
+
 
 
