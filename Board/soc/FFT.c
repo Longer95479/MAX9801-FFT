@@ -205,7 +205,7 @@ void filter(type_complex sample[])
 }
 
 //r_d - r_s
-void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
+void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s)
 {
   for(int i = 0; i < _N; i++) {
         sample_s[i].re = 0;
@@ -216,8 +216,8 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       
       //LPTMR_TimeStartms();
       for(int i = 0; i < _N/2; i++) {
-        sample_s[i].re = (uint16_t)(ADC_Get(0)*0.806);  //PTB4, ADC采集，单位是 mv，这行代码执行需要 19us
-        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Get(1)*0.806);  //PTB5
+        sample_s[i].re = (uint16_t)(ADC_Mid(ADC1, ADC_CH_s, ADC_12bit)*0.806);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC1, ADC_CH_d, ADC_12bit)*0.806);  //PTE1
         systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是50us采集一次数据
       }
       //time = LPTMR_TimeGetms();
@@ -241,9 +241,9 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
 }
 
 //r_d - r_s
-float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
+float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s)
 {
-  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
+  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s);
       
       int max = 0;
       for (int i = 0; i < _N; i++)
@@ -254,12 +254,12 @@ float distance_difference(float V_sound, type_complex sample_d[], type_complex s
 }
 
 //音速辨识，测量十次。
-float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft)
+float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s)
 {  
   static int max[TIMES];
   
   for (int i = 0; i < TIMES; i++) {
-    xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
+    xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s);
     
     max[i] = 0;
     for (int j = 0; j < _N; j++)

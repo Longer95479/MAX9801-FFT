@@ -42,21 +42,25 @@ int main(void)
     Wnk_fft = init_Wnk(fft, _N);
     Wnk_ifft = init_Wnk(ifft, _N);
         
-    float V_sound = V_sound_Identification(sample_d, sample_s, z, Wnk_fft, Wnk_ifft); //音速辨识
+    float V_sound = V_sound_Identification(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9); //音速辨识
     
     while(1) {
       
-      float s = distance_difference(V_sound, sample_d, sample_s, z, Wnk_fft, Wnk_ifft);
+      //LPTMR_TimeStartms();
+      float s = distance_difference(V_sound, sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9);
+      //time = LPTMR_TimeGetms();
       
       int max = (s / V_sound - 19e-6) / 5e-5 + _N/2 - 1;
+      
             
       IFFT(sample_s, Wnk_ifft, _N);
       IFFT(sample_d, Wnk_ifft, _N);
       
-      for(int i = 0; i < _N; i++) 
-        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (int16)(max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
+      //for(int i = 0; i < _N; i++) 
+        //ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (int16)(max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
       
-      //printf("%d, %f\n", time, s);
+      //printf("%d, %d\n", time, max - _N/2 + 1);
+      ANO_DT_send_int16((int16)(max - _N/2 + 1), 0, 0, 0, 0, 0, 0, 0);
       
     }
 }

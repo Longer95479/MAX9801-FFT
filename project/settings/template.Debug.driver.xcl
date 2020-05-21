@@ -8,6 +8,8 @@
 
 "D:\Longer\IAR_ARM\arm\CONFIG\debugger\NXP\MK66FX1M0xxx18.ddf" 
 
+"--drv_verify_download" 
+
 "--semihosting" 
 
 "--device=MK66FX1M0xxx18" 

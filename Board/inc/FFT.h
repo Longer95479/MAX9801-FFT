@@ -6,7 +6,7 @@
 #define ifft 0
 #define _N 2048
 #define DISTANCE 0.2    //用于音速辨识的两个麦克风距离
-#define TIMES 20        //音速辨识时重复测量次数
+#define TIMES 50        //音速辨识时重复测量次数
 
 //#define GOBAL
 
@@ -33,9 +33,9 @@ type_complex *init_Wnk(uint8 model, int N);
 
 void amplitude_and_mean_process(type_complex sample[]);
 void filter(type_complex sample[]);
-void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft);
-float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft);
-float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft);
+void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s);
+float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s);
+float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s);
 
 
 #endif
