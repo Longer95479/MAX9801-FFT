@@ -2446,6 +2446,9 @@
         <file>
             <name>$PROJ_DIR$\..\Board\soc\LQ_WDOG.c</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\Board\soc\Slide_average_filter.c</name>
+        </file>
     </group>
     <group>
         <name>CMSIS</name>

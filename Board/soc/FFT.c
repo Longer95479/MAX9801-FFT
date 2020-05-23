@@ -225,13 +225,14 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       
       amplitude_and_mean_process(sample_s);
       amplitude_and_mean_process(sample_d);
+      
+      slide_average_filter(sample_s, 7);
+      slide_average_filter(sample_d, 7);
     
       
       FFT(sample_s, Wnk_fft, _N);      
       FFT(sample_d, Wnk_fft, _N);
       
-      //filter(sample_s);
-      //filter(sample_d);
       
       for (int i = 0; i < _N; i++) {
         z[i] = complex_mult(sample_s[i], sample_d[i]);

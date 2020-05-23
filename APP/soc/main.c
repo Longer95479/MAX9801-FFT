@@ -56,11 +56,11 @@ int main(void)
       IFFT(sample_s, Wnk_ifft, _N);
       IFFT(sample_d, Wnk_ifft, _N);
       
-      //for(int i = 0; i < _N; i++) 
-        //ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (int16)(max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
+      for(int i = 0; i < _N; i++) 
+        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (int16)(max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
       
       //printf("%d, %d\n", time, max - _N/2 + 1);
-      ANO_DT_send_int16((int16)(max - _N/2 + 1), 0, 0, 0, 0, 0, 0, 0);
+      //ANO_DT_send_int16((int16)(max - _N/2 + 1), 0, 0, 0, 0, 0, 0, 0);
       
     }
 }

@@ -408,7 +408,7 @@
                 </option>
                 <option>
                     <name>IccAllowVLA</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IccStaticDestr</name>
@@ -772,7 +772,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>lnk0t.icf</state>
+                    <state>$TOOLKIT_DIR$\config\linker\NXP\MK66xX1M_18.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -832,7 +832,7 @@
                 </option>
                 <option>
                     <name>IlinkProgramEntryLabel</name>
-                    <state></state>
+                    <state>__iar_program_start</state>
                 </option>
                 <option>
                     <name>DoFill</name>
@@ -1005,7 +1005,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>template_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>
@@ -2151,6 +2151,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Board\soc\LQ_WDOG.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Board\soc\Slide_average_filter.c</name>
         </file>
     </group>
     <group>

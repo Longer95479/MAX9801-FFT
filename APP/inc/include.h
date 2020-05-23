@@ -66,6 +66,7 @@
 #include "LG_EncTPM.h"             /*TPM±àÂëÆ÷    Çı¶¯*/
 #include "ANO_DT.h"
 #include "FFT.h"
+#include "Slide_average_filter.h"
 
 
 #endif
