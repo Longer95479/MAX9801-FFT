@@ -7,6 +7,7 @@
 #define _N 2048
 #define DISTANCE 0.2    //用于音速辨识的两个麦克风距离
 #define TIMES 50        //音速辨识时重复测量次数
+#define DELTA_TIME 5e-5
 
 //#define GOBAL
 

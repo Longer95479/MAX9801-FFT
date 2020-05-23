@@ -218,7 +218,7 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       for(int i = 0; i < _N/2; i++) {
         sample_s[i].re = (uint16_t)(ADC_Mid(ADC1, ADC_CH_s, ADC_12bit)*0.806);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
         sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC1, ADC_CH_d, ADC_12bit)*0.806);  //PTE1
-        systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是50us采集一次数据
+        systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是 DELTA_TIME = 50us 采集一次数据
       }
       //time = LPTMR_TimeGetms();
 
@@ -250,7 +250,7 @@ float distance_difference(float V_sound, type_complex sample_d[], type_complex s
         if (z[i].re > z[max].re)
           max = i;
       
-      return V_sound * ((max - _N/2 + 1)  * 5e-5 +  19e-6);
+      return V_sound * ((max - _N/2 + 1)  * DELTA_TIME +  19e-6);
 }
 
 //音速辨识，测量十次。
@@ -273,7 +273,7 @@ float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], t
   
   sum_of_max /= TIMES;
   
-  float V_sound = DISTANCE / ((sum_of_max - _N/2 + 1)  * 5e-5 +  19e-6);
+  float V_sound = DISTANCE / ((sum_of_max - _N/2 + 1)  * DELTA_TIME +  19e-6);
   
   return V_sound;
   

@@ -50,7 +50,7 @@ int main(void)
       float s = distance_difference(V_sound, sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9);
       //time = LPTMR_TimeGetms();
       
-      int max = (s / V_sound - 19e-6) / 5e-5 + _N/2 - 1;
+      int max = (s / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
       
             
       IFFT(sample_s, Wnk_ifft, _N);
