@@ -12,7 +12,7 @@
 -------------------------------------------------------------------------------------------------------*/
 #include "include.h"
 
-type_complex sample_s[_N], sample_d[_N], z[_N];
+type_complex sample_sx[_N], sample_dx[_N], sample_sy[_N], sample_dy[_N], z[_N];
 int main(void) 
 {
    PLL_Init(PLL180);                   //初始化PLL为180M 
@@ -35,6 +35,7 @@ int main(void)
     UART_Init(UART4, 115200);           //用于显示波形
     
     ADC_Init(ADC1);                    //ADC1初始化
+    ADC_Init(ADC0);
     
     int time;
     
@@ -42,25 +43,29 @@ int main(void)
     Wnk_fft = init_Wnk(fft, _N);
     Wnk_ifft = init_Wnk(ifft, _N);
         
-    float V_sound = V_sound_Identification(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9); //音速辨识
+    float V_sound = V_sound_Identification(sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9, 1); //音速辨识
+    
+    V_sound = 352;
     
     while(1) {
       
       //LPTMR_TimeStartms();
-      float s = distance_difference(V_sound, sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9);
+      float sx = distance_difference(V_sound, sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9, 1);
       //time = LPTMR_TimeGetms();
       
-      int max = (s / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
+      float sy = distance_difference(V_sound, sample_dy, sample_sy, z, Wnk_fft, Wnk_ifft, ADC0_SE12, ADC0_SE13, 0);
+      
+      int max = (sy / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
       
             
-      IFFT(sample_s, Wnk_ifft, _N);
-      IFFT(sample_d, Wnk_ifft, _N);
+      IFFT(sample_sy, Wnk_ifft, _N);
+      IFFT(sample_dy, Wnk_ifft, _N);
       
-      for(int i = 0; i < _N; i++) 
-        ANO_DT_send_int16((int16)(100*sample_s[i].re), (int16)(100*sample_d[i].re), (int16)(s*1000), (int16)(max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
+      //for(int i = 0; i < _N; i++) 
+        //ANO_DT_send_int16((int16)(100*sample_sy[i].re), (int16)(100*sample_dy[i].re), (int16)(sy*1000), (int16)(max - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
       
       //printf("%d, %d\n", time, max - _N/2 + 1);
-      //ANO_DT_send_int16((int16)(max - _N/2 + 1), 0, 0, 0, 0, 0, 0, 0);
+      ANO_DT_send_int16((int16)(max - _N/2 + 1), 0, 0, 0, 0, 0, 0, 0);
       
     }
 }

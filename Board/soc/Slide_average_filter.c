@@ -45,4 +45,7 @@ void slide_average_filter(type_complex sample[], int wide)
             else
 		sample[i - (wide + 1)/2].re = queue_in(queue, (wide + 1)/2, sum/wide);
 	}
+        
+        for (int i = 0; i < (wide + 1)/2; i++)
+          sample[_N/2 + i].re = 0;
 }
