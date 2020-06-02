@@ -248,19 +248,11 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       IFFT(z, Wnk_ifft, _N);
 }
 
-//r_d - r_s
-float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, int ADC)
+
+static float midst_filter(int16 max_now, int16 max_before[], float V_sound)
 {
-  static int16 max_before[2] = {0}; //队列数组，0进1出
-  static int16 max_now, max, max_chosen;
+  static int16 max, max_chosen;
   static int8 flag = 0;
-  
-  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC);
-      
-  max_now = 0;
-  for (int i = 0; i < _N; i++)
-  if (z[i].re > z[max_now].re)
-      max_now = i;
   
   if (flag == 0) {
     max_before[0] = max_now;
@@ -305,17 +297,35 @@ float distance_difference(float V_sound, type_complex sample_d[], type_complex s
     max_before[0] =  max_now;  
   }
   
-  if (abs(max - max_chosen) > 12)
-    max = max_chosen;
   
   if (max > 1034)
     max = 1034;
   else if (max < 1014)
     max = 1014;
   
-   max_chosen = max;
       
-   return V_sound * ((max - _N/2 + 1)  * DELTA_TIME +  19e-6);
+   return max;
+}
+
+//r_d - r_s
+float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, int ADC)
+{
+  static int16 max_before[2] = {0}, max_second_filter[2] = {0}; //队列数组，0进1出
+  static int16 max_now, max_second_now;
+  static int16 max_chosen;
+  
+  
+  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC);
+      
+  max_now = 0;
+  for (int i = 0; i < _N; i++)
+  if (z[i].re > z[max_now].re)
+      max_now = i;
+  
+  max_second_now = midst_filter(max_now, max_before, V_sound);
+  max_chosen = midst_filter(max_second_now, max_second_filter, V_sound);
+  
+   return V_sound * ((max_chosen - _N/2 + 1)  * DELTA_TIME +  19e-6);
 }
 
 

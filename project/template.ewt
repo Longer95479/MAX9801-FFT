@@ -2390,6 +2390,9 @@
             <name>$PROJ_DIR$\..\Board\soc\LG_EncTPM.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Board\soc\Longer_motor.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Board\soc\LQ_12864.c</name>
         </file>
         <file>

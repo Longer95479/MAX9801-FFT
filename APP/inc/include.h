@@ -67,6 +67,7 @@
 #include "ANO_DT.h"
 #include "FFT.h"
 #include "Slide_average_filter.h"
+#include "Longer_motor.h"
 
 
 #endif
