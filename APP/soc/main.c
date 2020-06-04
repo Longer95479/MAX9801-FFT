@@ -45,37 +45,39 @@ int main(void)
     Wnk_fft = init_Wnk(fft, _N);
     Wnk_ifft = init_Wnk(ifft, _N);
         
-    float V_sound = V_sound_Identification(sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9, 1); //音速辨识
+    //float V_sound = V_sound_Identification(sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9, ADC1, ADC1); //音速辨识
     
-    V_sound = 352;
+    float V_sound = 352;
     
     while(1) {
       
-      //LPTMR_TimeStartms();
-      float sx = distance_difference(V_sound, sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC0_SE9, ADC0_SE8, 0);
-      //time = LPTMR_TimeGetms();
+      LPTMR_TimeStartms();
+      float sx = distance_difference(V_sound, sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC0_SE9, ADC0_SE8, ADC0, ADC0);
+      time = LPTMR_TimeGetms();
       
-      float sy = distance_difference(V_sound, sample_dy, sample_sy, z, Wnk_fft, Wnk_ifft, ADC1_SE7a, ADC1_SE6a, 1);
+      float sy = distance_difference(V_sound, sample_dy, sample_sy, z, Wnk_fft, Wnk_ifft, ADC1_SE7a, ADC1_SE6a, ADC1, ADC1);
       
-      //car_move(sx, sy);
-      
-      int max_x = (sx / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
-      int max_y = (sy / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;      
-      /* 
+      car_move(sx, sy);
+           
+      /*
       IFFT(sample_sx, Wnk_ifft, _N);
       IFFT(sample_dx, Wnk_ifft, _N);
       
       IFFT(sample_sy, Wnk_ifft, _N);
       IFFT(sample_dy, Wnk_ifft, _N);
-      */
+        
       for(int i = 0; i < _N; i++) {
         //ANO_DT_send_int16((int16)(100*sample_sx[i].re), (int16)(100*sample_dx[i].re), (int16)(sx*1000), (int16)(max_x - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机 
         //ANO_DT_send_int16((int16)(100*sample_sy[i].re), (int16)(100*sample_dy[i].re), (int16)(sy*1000), (int16)(max_y - _N/2 + 1), (int16)z[i].re, (int16)V_sound, 0, 0);  //这里把数据传给上位机      
-        //ANO_DT_send_int16((int16)(100*sample_sx[i].re), (int16)(100*sample_dx[i].re), (int16)(100*sample_sy[i].re), (int16)(100*sample_dy[i].re), 0, 0, 0, 0);  //这里把数据传给上位机 
+        ANO_DT_send_int16((int16)(100*sample_sx[i].re), (int16)(100*sample_dx[i].re), (int16)(100*sample_sy[i].re), (int16)(100*sample_dy[i].re), 0, 0, 0, 0);  //这里把数据传给上位机 
       }
-      //printf("%d, %d\n", time, max - _N/2 + 1);
+      */
+      printf("%d\n", time);
+      /*
+      int max_x = (sx / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
+      int max_y = (sy / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1; 
       ANO_DT_send_int16((int16)(max_x - _N/2 + 1), (int16)(max_y - _N/2 + 1), 0, 0, 0, 0, 0, 0);
-      
+      */
     }
 }
 

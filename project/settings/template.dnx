@@ -39,7 +39,7 @@
         <stlinkResetStrategy>0</stlinkResetStrategy>
     </StLinkDriver>
     <DebugChecksum>
-        <Checksum>3279266256</Checksum>
+        <Checksum>1046990871</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -127,7 +127,8 @@
         <Bp2>_ 0 "EMUL_CODE" "0x00004FD0" 0 0 1 "" 0 "" 0</Bp2>
         <Bp3>_ 0 "EMUL_CODE" "0x000047C4" 0 0 1 "" 0 "" 0</Bp3>
         <Bp4>_ 0 "EMUL_CODE" "0x000013EA" 0 0 1 "" 0 "" 0</Bp4>
-        <Count>5</Count>
+        <Bp5>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Board\soc\FFT.c}.235.7" 0 0 1 "" 0 "" 0</Bp5>
+        <Count>6</Count>
     </Breakpoints2>
     <TermIOLog>
         <LoggingEnabled>_ 0</LoggingEnabled>

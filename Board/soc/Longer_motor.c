@@ -26,6 +26,72 @@ void car_move(float sx, float sy)
   int max_x = (sx / 352 - 19e-6) / DELTA_TIME + _N/2 - 1;
   int max_y = (sy / 352 - 19e-6) / DELTA_TIME + _N/2 - 1;
   
+  
+  if (max_y < 0) {
+    GPIO_PinInit(PTA17, GPO, 0);
+  }
+  else {
+    GPIO_PinInit(PTA17, GPO, 1);
+  }
+  
+  if (max_x > 2) {
+    GPIO_PinInit(PTC0, GPO, 0);
+    GPIO_PinInit(PTD15, GPO, 1);
+  }
+  else if (max_x < -2) {
+    GPIO_PinInit(PTC0, GPO, 1);
+    GPIO_PinInit(PTD15, GPO, 0);
+  }
+  else {
+    GPIO_PinInit(PTC0, GPO, 1);
+    GPIO_PinInit(PTD15, GPO, 1);
+  }
+  
+  
+  if (max_x < -2 && max_y <= 2) {
+    wheel[0] = 1.5;
+    wheel[1] = 1.5;
+    wheel[2] = 2.5;
+    wheel[3] = 2.5;
+  }
+  else if (max_x >= -2 && max_x <= 2 && max_y < -2) {
+    wheel[0] = 2;
+    wheel[1] = 2;
+    wheel[2] = 2;
+    wheel[3] = 2;
+  }
+  else if (max_x > 2 && max_y <= 2) {
+    wheel[0] = 2.5;
+    wheel[1] = 2.5;
+    wheel[2] = 1.5;
+    wheel[3] = 1.5;
+  }
+  else if (max_x > 2 && max_y > 2) {
+    wheel[0] = -2.5;
+    wheel[1] = -2.5;
+    wheel[2] = -1.5;
+    wheel[3] = -1.5;
+  }
+  else if (max_x >= -2 && max_x <= 2 && max_y > 2) {
+    wheel[0] = -2;
+    wheel[1] = -2;
+    wheel[2] = -2;
+    wheel[3] = -2;
+  }
+  else if (max_x < -2 && max_y > 2) {
+    wheel[0] = -1.5;
+    wheel[1] = -1.5;
+    wheel[2] = -2.5;
+    wheel[3] = -2.5;
+  }
+  else if (max_x >= -2 && max_x <= 2 && max_y >= -2 && max_y <= 2) {
+    wheel[0] = 0;
+    wheel[1] = 0;
+    wheel[2] = 0;
+    wheel[3] = 0;
+  }
+  
+  /*
   if (max_x > 2)
     w = 10;
   else if (max_x < -2)
@@ -38,13 +104,18 @@ void car_move(float sx, float sy)
   else if (max_y < -2)
     vy = 0.5;
   else
-    vy = 0;
+   vy = 0;
+  
+  if (w == 0)
+    GPIO_PinInit(PTC0, GPO, 1);
+  else
+    GPIO_PinInit(PTC0, GPO, 0);
   
   wheel[0] = vy + 0.18 * w;
   wheel[1] = vy + 0.18 * w;
   wheel[2] = vy - 0.18 * w;
   wheel[3] = vy - 0.18 * w;
-  
+  */
   if (wheel[0] > 0) {
     GPIO_PinInit(PTC1, GPO, 0);
     FTM_PwmDuty(FTM0, FTM_CH1, (int)(gain * wheel[0]));
@@ -80,7 +151,7 @@ void car_move(float sx, float sy)
     GPIO_PinInit(PTC3, GPO, 1);
     FTM_PwmDuty(FTM0, FTM_CH3, (int)(-gain * wheel[3]));
   }
-   
+  
     
 }
 

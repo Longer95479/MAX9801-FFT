@@ -197,15 +197,17 @@ void amplitude_and_mean_process(type_complex sample[])
 }
 
 
-void filter(type_complex sample[])
+static void low_pass_filter(type_complex sample[])
 {
   for (int i = 0; i < _N; i++)
-    if (i < 25 || (i > 130 && i < 1917) || i > 2022)
-      sample[i].re = 0;
+    if (i < 50 || (i > 204 && i < 1842) || i > 1997) {
+      sample[i].re = sample[i].re / sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
+      sample[i].im = sample[i].im / sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
+    }
 }
 
 //r_d - r_s
-void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, int ADC)
+void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s)
 {
   for(int i = 0; i < _N; i++) {
         sample_s[i].re = 0;
@@ -215,16 +217,9 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       }
       
       //LPTMR_TimeStartms();
-  if (ADC)
       for(int i = 0; i < _N/2; i++) {
-        sample_s[i].re = (uint16_t)(ADC_Mid(ADC1, ADC_CH_s, ADC_12bit)*0.806);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
-        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC1, ADC_CH_d, ADC_12bit)*0.806);  //PTE1
-        systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是 DELTA_TIME = 50us 采集一次数据
-      }
-  else
-    for(int i = 0; i < _N/2; i++) {
-        sample_s[i].re = (uint16_t)(ADC_Mid(ADC0, ADC_CH_s, ADC_12bit)*0.806);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
-        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC0, ADC_CH_d, ADC_12bit)*0.806);  //PTE1
+        sample_s[i].re = (uint16_t)(ADC_Mid(ADC_s, ADC_CH_s, ADC_12bit)*0.806);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC_d, ADC_CH_d, ADC_12bit)*0.806);  //PTE1
         systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是 DELTA_TIME = 50us 采集一次数据
       }
       //time = LPTMR_TimeGetms();
@@ -233,13 +228,15 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       amplitude_and_mean_process(sample_s);
       amplitude_and_mean_process(sample_d);
       
-      slide_average_filter(sample_s, 7);
-      slide_average_filter(sample_d, 7);
-    
+      //slide_average_filter(sample_s, 17);
+      //slide_average_filter(sample_d, 17);
+      
       
       FFT(sample_s, Wnk_fft, _N);      
       FFT(sample_d, Wnk_fft, _N);
       
+      low_pass_filter(sample_s);
+      low_pass_filter(sample_d);
       
       for (int i = 0; i < _N; i++) {
         z[i] = complex_mult(sample_s[i], sample_d[i]);
@@ -308,14 +305,14 @@ static float midst_filter(int16 max_now, int16 max_before[], float V_sound)
 }
 
 //r_d - r_s
-float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, int ADC)
+float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type *ADC_d, ADC_Type *ADC_s)
 {
   static int16 max_before[2] = {0}, max_second_filter[2] = {0}; //队列数组，0进1出
   static int16 max_now, max_second_now;
   static int16 max_chosen;
   
   
-  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC);
+  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC_d, ADC_s);
       
   max_now = 0;
   for (int i = 0; i < _N; i++)
@@ -330,12 +327,12 @@ float distance_difference(float V_sound, type_complex sample_d[], type_complex s
 
 
 //音速辨识，测量十次。
-float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, int ADC)
+float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type *ADC_d, ADC_Type *ADC_s)
 {  
   static int max[TIMES];
   
   for (int i = 0; i < TIMES; i++) {
-    xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC);
+    xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC_d, ADC_s);
     
     max[i] = 0;
     for (int j = 0; j < _N; j++)
