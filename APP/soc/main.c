@@ -72,7 +72,7 @@ int main(void)
         ANO_DT_send_int16((int16)(100*sample_sx[i].re), (int16)(100*sample_dx[i].re), (int16)(100*sample_sy[i].re), (int16)(100*sample_dy[i].re), 0, 0, 0, 0);  //这里把数据传给上位机 
       }
       */
-      printf("%d\n", time);
+      //printf("%d\n", time);
       /*
       int max_x = (sx / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
       int max_y = (sy / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1; 

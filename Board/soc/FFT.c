@@ -200,9 +200,9 @@ void amplitude_and_mean_process(type_complex sample[])
 static void low_pass_filter(type_complex sample[])
 {
   for (int i = 0; i < _N; i++)
-    if (i < 50 || (i > 204 && i < 1842) || i > 1997) {
-      sample[i].re = sample[i].re / sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
-      sample[i].im = sample[i].im / sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
+    if (i < 50 || (i > 204 && i < 1843) || i > 1997 || (i > 110 && i < 144) || (i > 1903 && i < 1937)) {
+      sample[i].re = sample[i].re / 1000;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
+      sample[i].im = sample[i].im / 1000;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
     }
 }
 
