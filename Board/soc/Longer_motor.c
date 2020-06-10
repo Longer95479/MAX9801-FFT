@@ -48,43 +48,43 @@ void car_move(float sx, float sy)
   }*/
   
   
-  if (max_x < -2 && max_y <= 2) {
-    wheel[0] = 1.5;
-    wheel[1] = 1.5;
-    wheel[2] = 2.5;
-    wheel[3] = 2.5;
+  if (max_x < -3 && max_y <= 0.5) {
+    wheel[0] = -1.7;//-1.5;
+    wheel[1] = -1.7;//-1.5;
+    wheel[2] = 1.7;//2.5;
+    wheel[3] = 1.7;//2.5;
   }
-  else if (max_x >= -2 && max_x <= 2 && max_y < -2) {
+  else if (max_x >= -3 && max_x <= 3 && max_y < -0.5) {
     wheel[0] = 2;
     wheel[1] = 2;
     wheel[2] = 2;
     wheel[3] = 2;
   }
-  else if (max_x > 2 && max_y <= 2) {
-    wheel[0] = 2.5;
-    wheel[1] = 2.5;
-    wheel[2] = 1.5;
-    wheel[3] = 1.5;
+  else if (max_x > 3 && max_y <= 0.5) {
+    wheel[0] = 1.7;//2.5;
+    wheel[1] = 1.7;//2.5;
+    wheel[2] = -1.7;//-1.5;
+    wheel[3] = -1.7;//-1.5;
   }
-  else if (max_x > 2 && max_y > 2) {
-    wheel[0] = -2.5;
-    wheel[1] = -2.5;
-    wheel[2] = -1.5;
-    wheel[3] = -1.5;
+  else if (max_x > 3 && max_y > 0.5) {
+    wheel[0] = -1.7;//-2.5;
+    wheel[1] = -1.7;//-2.5;
+    wheel[2] = 1.7;//1.5;
+    wheel[3] = 1.7;//1.5;
   }
-  else if (max_x >= -2 && max_x <= 2 && max_y > 2) {
+  else if (max_x >= -3 && max_x <= 3 && max_y > 0.5) {
     wheel[0] = -2;
     wheel[1] = -2;
     wheel[2] = -2;
     wheel[3] = -2;
   }
-  else if (max_x < -2 && max_y > 2) {
-    wheel[0] = -1.5;
-    wheel[1] = -1.5;
-    wheel[2] = -2.5;
-    wheel[3] = -2.5;
+  else if (max_x < -3 && max_y > 0.5) {
+    wheel[0] = 1.7;//1.5;
+    wheel[1] = 1.7;//1.5;
+    wheel[2] = -1.7;//-2.5;
+    wheel[3] = -1.7;//-2.5;
   }
-  else if (max_x >= -2 && max_x <= 2 && max_y >= -2 && max_y <= 2) {
+  else if (max_x >= -3 && max_x <= 3 && max_y >= -0.5 && max_y <= 0.5) {
     wheel[0] = 0;
     wheel[1] = 0;
     wheel[2] = 0;

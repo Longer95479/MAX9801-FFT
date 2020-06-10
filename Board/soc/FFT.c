@@ -201,8 +201,8 @@ static void low_pass_filter(type_complex sample[])
 {
   for (int i = 0; i < _N; i++)
     if (i < 50 || (i > 204 && i < 1843) || i > 1997 || (i > 110 && i < 144) || (i > 1903 && i < 1937)) {
-      sample[i].re = sample[i].re / 1000;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
-      sample[i].im = sample[i].im / 1000;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
+      sample[i].re = 0.0001 * sample[i].re;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
+      sample[i].im = 0.0001 * sample[i].im;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
     }
 }
 
@@ -215,15 +215,16 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
         sample_d[i].re = 0;
         sample_d[i].im = 0;
       }
-      
+  
+      //int time;
       //LPTMR_TimeStartms();
       for(int i = 0; i < _N/2; i++) {
-        sample_s[i].re = (uint16_t)(ADC_Mid(ADC_s, ADC_CH_s, ADC_12bit)*0.806);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
-        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC_d, ADC_CH_d, ADC_12bit)*0.806);  //PTE1
-        systime.delay_us(12); //经检测，这个其实是ms延时      //延时以控制采样频率，目前是 DELTA_TIME = 50us 采集一次数据
+        sample_s[i].re = (uint16_t)(ADC_Mid(ADC_s, ADC_CH_s, ADC_12bit)/**0.806*/);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC_d, ADC_CH_d, ADC_12bit)/**0.806*/);  //PTE1
+        systime.delay_us(62);      //延时以控制采样频率，目前是 DELTA_TIME = 100us 采集一次数据，计算公式为 DELTA_TIME * 10E6 - 38
       }
       //time = LPTMR_TimeGetms();
-
+      //printf("%d\n", time);
       
       amplitude_and_mean_process(sample_s);
       amplitude_and_mean_process(sample_d);
@@ -231,96 +232,76 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], t
       //slide_average_filter(sample_s, 17);
       //slide_average_filter(sample_d, 17);
       
-      
-      FFT(sample_s, Wnk_fft, _N);      
+      FFT(sample_s, Wnk_fft, _N); 
       FFT(sample_d, Wnk_fft, _N);
       
-      low_pass_filter(sample_s);
-      low_pass_filter(sample_d);
+      
+      //low_pass_filter(sample_s);
+      //low_pass_filter(sample_d);
+      
       
       for (int i = 0; i < _N; i++) {
         z[i] = complex_mult(sample_s[i], sample_d[i]);
+        
+        static float A = 1;
+        A =  0.01 * sqrt(pow(z[i].re, 2) + pow(z[i].im, 2));
+        z[i].re = z[i].re / A;
+        z[i].im = z[i].im / A;
       }
+      
       
       IFFT(z, Wnk_ifft, _N);
 }
 
 
-static float midst_filter(int16 max_now, int16 max_before[], float V_sound)
+static int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N)
 {
-  static int16 max, max_chosen;
-  static int8 flag = 0;
+  int max_queue[N], flag;
   
-  if (flag == 0) {
-    max_before[0] = max_now;
-    max = max_now;
-    max_chosen = max_now;
-    flag = 1;
+  //队列更新
+  for (int i = N - 1; i >0; i--)
+  	max_queue_ori[i] = max_queue_ori[i - 1];
+  max_queue_ori[0] = max_now;
+  
+  //生成副本 
+  for (int i = 0; i < N; i++)
+  	max_queue[i] = max_queue_ori[i];
+  
+  for (int i = 0; i < N - 1; i++) { 
+	for (int j = 0; j < N - 1 -i; j++)
+            if (max_queue[j] > max_queue[j + 1]) {
+		int temp = max_queue[j + 1];
+                    max_queue[j + 1] = max_queue[j];
+			max_queue[j] = temp;
+			flag = 0;
+            }
+            if (flag)
+		break; 
   }
   
-  else {
-    if (abs(max_before[0]) < abs(max_before[1])) {
-      if (abs(max_now) > abs(max_before[1])) {
-        //确定中值
-        max = max_before[1];               
-      }
-      else if (abs(max_now) > abs(max_before[0])) {
-        //确定中值
-        max = max_now;
-      }
-      else {
-        //确定中值
-        max = max_before[0];                
-      }
-                
-    }
-    else {
-      if (abs(max_now) > abs(max_before[0])) {
-        //确定中值
-        max = max_before[0];               
-      }
-      else if (abs(max_now) > abs(max_before[1])) {
-        //确定中值
-        max = max_now;
-      }
-      else {
-        //确定中值
-        max = max_before[1];                
-      }
-    }
+  if (max_queue[(N - 1)/2] > 1034)
+    return 1034;
+  else if (max_queue[(N - 1)/2] < 1014)
+    return 1014;
+  else
+    return max_queue[(N - 1)/2]; 
   
-    //队列更新
-    max_before[1] = max_before[0];
-    max_before[0] =  max_now;  
-  }
-  
-  
-  if (max > 1034)
-    max = 1034;
-  else if (max < 1014)
-    max = 1014;
-  
-      
-   return max;
 }
+
 
 //r_d - r_s
 float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], type_complex *Wnk_fft, type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type *ADC_d, ADC_Type *ADC_s)
 {
-  static int16 max_before[2] = {0}, max_second_filter[2] = {0}; //队列数组，0进1出
-  static int16 max_now, max_second_now;
-  static int16 max_chosen;
-  
-  
+  static int16 max_now, max_chosen, max_queue[9] = {0}; //队列数组，0进
+   
   xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC_d, ADC_s);
-      
+       
   max_now = 0;
   for (int i = 0; i < _N; i++)
   if (z[i].re > z[max_now].re)
       max_now = i;
   
-  max_second_now = midst_filter(max_now, max_before, V_sound);
-  max_chosen = midst_filter(max_second_now, max_second_filter, V_sound);
+  max_chosen = midst_filter(max_now, max_queue, 9);
   
    return V_sound * ((max_chosen - _N/2 + 1)  * DELTA_TIME +  19e-6);
 }
