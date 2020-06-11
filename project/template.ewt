@@ -2402,9 +2402,6 @@
             <name>$PROJ_DIR$\..\Board\soc\LQ_ADC.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_CAMERA_OV7725.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Board\soc\LQ_CCD.c</name>
         </file>
         <file>
