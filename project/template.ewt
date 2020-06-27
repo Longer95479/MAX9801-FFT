@@ -2393,58 +2393,7 @@
             <name>$PROJ_DIR$\..\Board\soc\Longer_motor.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_12864.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_9AX.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_ADC.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_CCD.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_FLASH.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_KEY.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Board\soc\LQ_LED.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_LPTMR.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_MOTOR.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_MPU6050.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_OV7725.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_PIT.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_SD5.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_SGP18T.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_SYSTICK.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_UART.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_Ultrasonic.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Board\soc\LQ_WDOG.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Board\soc\Slide_average_filter.c</name>

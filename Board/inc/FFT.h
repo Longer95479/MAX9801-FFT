@@ -16,6 +16,14 @@ typedef struct {
 	float im; //imaginary
 } type_complex;
 
+/*typedef struct {
+  type_complex *sample_s1;
+  type_complex *sample_d1;
+  type_complex *sample_s2;
+  type_complex *sample_d2;
+  
+}*/
+
 type_complex complex_build(float re0, float im0);
 type_complex complex_add(type_complex cx1, type_complex cx2);
 type_complex complex_minus(type_complex cx1, type_complex cx2);

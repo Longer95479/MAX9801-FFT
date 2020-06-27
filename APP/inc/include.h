@@ -35,24 +35,24 @@
                     龙邱模块驱动
 ------------------------------------------------------------------*/
 #include "LQ_LED.h"                /* LED         例子 */
-#include "LQ_KEY.h"                /* KEY         例子 */
-#include "LQ_PIT.h"                /* PIT         例子 */
-#include "LQ_UART.h"               /* UART        例子 */
-#include "LQ_LPTMR.h"              /* LPTMR       例子 */
-#include "LQ_SYSTICK.h"            /* SYSTICK     例子 */
-#include "LQ_12864.h"              /* OLED        驱动 */
-#include "LQ_SGP18T.h"             /* TFT1.8      驱动 */
-#include "LQ_ADC.h"                /* ADC         例子 */
-#include "LQ_WDOG.h"               /* WDOG        例子 */
-#include "LQ_SD5.h"                /* 舵机        例子 */
-#include "LQ_MOTOR.h"              /* 电机        例子 */
-#include "LQ_MPU6050.h"            /* 6050        例子 */
-#include "LQ_9AX.h"                /* 九轴        例子 */
-#include "LQ_OV7725.h"             /* 7725        驱动 */
-#include "LQ_CAMERA_OV7725.h"      /* 摄像头      例子 */
-#include "LQ_FLASH.h"              /* FLASH       例子 */
-#include "LQ_CCD.h"                /* CCD         例子 */
-#include "LQ_Ultrasonic.h"         /* 超声波测距  例子 */
+//#include "LQ_KEY.h"                /* KEY         例子 */
+//#include "LQ_PIT.h"                /* PIT         例子 */
+//#include "LQ_UART.h"               /* UART        例子 */
+//#include "LQ_LPTMR.h"              /* LPTMR       例子 */
+//#include "LQ_SYSTICK.h"            /* SYSTICK     例子 */
+//#include "LQ_12864.h"              /* OLED        驱动 */
+//#include "LQ_SGP18T.h"             /* TFT1.8      驱动 */
+//#include "LQ_ADC.h"                /* ADC         例子 */
+//#include "LQ_WDOG.h"               /* WDOG        例子 */
+//#include "LQ_SD5.h"                /* 舵机        例子 */
+//#include "LQ_MOTOR.h"              /* 电机        例子 */
+//#include "LQ_MPU6050.h"            /* 6050        例子 */
+//#include "LQ_9AX.h"                /* 九轴        例子 */
+//#include "LQ_OV7725.h"             /* 7725        驱动 */
+//#include "LQ_CAMERA_OV7725.h"      /* 摄像头      例子 */
+//#include "LQ_FLASH.h"              /* FLASH       例子 */
+//#include "LQ_CCD.h"                /* CCD         例子 */
+//#include "LQ_Ultrasonic.h"         /* 超声波测距  例子 */
 
   
 /* 在OLED 上显示或者在TFT1.8显示 */

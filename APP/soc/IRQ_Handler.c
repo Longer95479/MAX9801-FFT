@@ -49,19 +49,19 @@ void PORTB_IRQHandler()
     if((PORTB_ISFR & (1<<n)))
     {
         /* 用户自行添加中断内程序 */
-        key_exti_flag = 0;
+        //key_exti_flag = 0;
     } 
     n=21;
     if((PORTB_ISFR & (1<<n)))
     {
         /* 用户自行添加中断内程序 */
-        key_exti_flag = 1;
+        //key_exti_flag = 1;
     } 
     n=22;
     if((PORTB_ISFR & (1<<n)))
     {
         /* 用户自行添加中断内程序 */
-        key_exti_flag = 2;
+        //key_exti_flag = 2;
     }
     //清除中断标志
     PORTB_ISFR = 0xffffffff;
@@ -71,13 +71,6 @@ void PORTB_IRQHandler()
 /////////////////////////////////////////////////////////////////
 ///////////////PIT中断服务函数///////////////////////////////////
 /////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------------------------    
-//全局变量  用于测试PIT定时器
-//------------------------------------------------------------------------------------------------ 
-extern volatile uint8_t pit0_test_flag;
-extern volatile uint8_t pit1_test_flag;
-extern volatile uint8_t pit2_test_flag;
-extern volatile uint8_t pit3_test_flag;
 
 /*---------------------------------------------------------------
 【函    数】PIT0_Interrupt
@@ -94,7 +87,6 @@ void PIT0_IRQHandler()
     TPM1->CNT = 0;
     printf("rps = %f\n", (float)(count * 50 / 520.0)); 
     
-    pit0_test_flag = 1;
 }
 /*---------------------------------------------------------------
 【函    数】PIT1_Interrupt
@@ -107,7 +99,6 @@ void PIT1_IRQHandler()
 {
     PIT_Flag_Clear(PIT1);       //清中断标志位
     /*用户添加所需代码*/
-    pit1_test_flag = 1;
 }
 /*---------------------------------------------------------------
 【函    数】PIT2_Interrupt
@@ -120,7 +111,6 @@ void PIT2_IRQHandler()
 {
     PIT_Flag_Clear(PIT2);       //清中断标志位
     /*用户添加所需代码*/
-    pit2_test_flag = 1;
 }
 /*---------------------------------------------------------------
 【函    数】PIT3_Interrupt
@@ -133,7 +123,6 @@ void PIT3_IRQHandler()
 {
     PIT_Flag_Clear(PIT3);       //清中断标志位
     /*用户添加所需代码*/
-    pit3_test_flag = 1;
 }
 
 /////////////////////////////////////////////////////////////////

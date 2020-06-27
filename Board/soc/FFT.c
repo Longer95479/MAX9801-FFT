@@ -1,17 +1,20 @@
 #include "include.h"
 
 /**
- * @File name   FFT.h
- * @brief       FFT运算相关实现函、及互相关运算、计算距离差
+ * @File name    FFT.c
+ * @Brief        FFT运算相关实现、互相关运算、计算距离差
  * @Author      Longer95479
- * @date        2020/6/27
+ * @Email       371573369@qq.com
+ * @Date        2020/6/27
  *
  */
 
 
 /**
  * @brief       创建一个复数
- * @param       re0, im0
+ * @param        re0: 实部
+ *               im0: 虚部
+ * @return      cx
  * @example
  * @note        此函数无用，因为定义了一个局部变量
  *
@@ -27,7 +30,8 @@ type_complex complex_build(float re0, float im0)
 
 /**
  * @brief       复数加法
- * @param       
+ * @param     
+ * @return      cx_add:和
  * @example
  * @note
  *
@@ -42,7 +46,8 @@ type_complex complex_add(type_complex cx1, type_complex cx2)
 
 /**
  * @brief       复数减法
- * @param       
+ * @param  
+ * @return      cx_minus: 差     
  * @example
  * @note
  *
@@ -57,7 +62,8 @@ type_complex complex_minus(type_complex cx1, type_complex cx2)
 
 /**
  * @brief       复数乘法
- * @param       
+ * @param     
+ * @return      cx_mult: 积  
  * @example
  * @note
  *
@@ -74,6 +80,7 @@ type_complex complex_mult(type_complex cx1, type_complex cx2)
 /**
  * @brief       把一个数与其二进制逆序的数交换位置，对输入数组的所有元素进行此操作。位码倒读
  * @param       需要重新排序的数组 x[], 数组长度 N
+ * @return      
  * @example      x[4] = {0, 1, 2, 3}, 转换成二进制后：0b00, 0b01, 0b10, 0b11。
  *              调用此函数 inver(x, 4);  得到新顺序：0b00, 0b10, 0b01, 0b11.
  *
@@ -105,6 +112,7 @@ static void inver(type_complex x[],int N)
  * @param        model: 用于确定生成 FFT 的旋转因子还是 IFFT的旋转因子
  *                Wnk: 指向生成的旋转因子的地址
  *                N: 数组长度
+ * @return
  * @example
  * @note        本打算用于将生成的旋转因子存在 Flash, 但现已经弃用，且其可用性还未确定。可删除
  *
@@ -133,8 +141,9 @@ void init_Wnk(uint8 model, type_complex *Wnk, int N)
 /**
  * @brief       生成旋转因此，用于 FFT 运算
  * @param        model: 用于确定生成 FFT 的旋转因子还是 IFFT的旋转因子
- *                Wnk: 指向生成的旋转因子的地址
  *                N: 数组长度
+ *
+ * @return      Wnk: 指向生成的旋转因子的地址
  * @example
  * @note        本打算用于将生成的旋转因子存在堆内。由于最多只能存64k数据 因此现已经弃用。目前是 Wnk 和 iWnk 把声明成const外部变量存储在flash
  *
@@ -166,7 +175,7 @@ type_complex *init_Wnk(uint8 model, int N)
  * @param       x[]: 时域的数据
  *               Wnk: 旋转因子
  *               N: 数据长度，必须为 2^n
- *
+ * @return      
  * @example
  * @note        此函数虽无返回值，但把 FFT 的结果即频域的值存储在 x[] 里，因此调用该函数后时域的数据被抹去。
  */
@@ -204,7 +213,7 @@ void FFT(type_complex x[], const type_complex *Wnk, int N)
  * @param       x[]: 频域的数据
  *               Wnk: 旋转因子
  *               N: 数据长度，必须为 2^n
- *
+ * @return
  * @example
  * @note        此函数虽无返回值，但把 NIFFT 的结果即时域的值存储在 x[] 里，因此调用该函数后频域的数据被抹去。
  *              该函数的结果还需全部除以 N, 因此一般只被 void IFFT(type_complex x[], const type_complex *Wnk, int N) 调用
@@ -243,7 +252,7 @@ void NIFFT(type_complex x[], const type_complex *Wnk, int N)
  * @param       x[]: 频域的数据
  *               Wnk: 旋转因子
  *               N: 数据长度，必须为 2^n
- *
+ * @return
  * @example
  * @note        此函数虽无返回值，但把 NIFFT 的结果全部除以 N并存储在 x[] 里，因此调用该函数后 x[] 里的原始数据被抹去。
  * 
@@ -258,8 +267,9 @@ void IFFT(type_complex x[], const type_complex *Wnk, int N)
 /**
  * @brief       对波形标准化，寻找均值和最大幅值，数据分成32组分别处理
  * @param       sample[]: 待标准化的波形数据
+ * @return
  * @example     
- * @note        
+ * @note        虽然无返回值，但结果存储在 sample[]
  */
 void amplitude_and_mean_process(type_complex sample[])
 {
@@ -298,6 +308,7 @@ void amplitude_and_mean_process(type_complex sample[])
 /**
  * @brief      带通滤波
  * @param       sample[]: 待滤波的频域数据
+ * @return
  * @example     
  * @note        此函数实现频域滤波，直接将不想要的频率成分乘上一个很小的值
  */
@@ -310,13 +321,16 @@ static void low_pass_filter(type_complex sample[])
     }
 }
 
+
+
+
 //r_d - r_s
 void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s)
 {
   for(int i = 0; i < _N; i++) {
-        sample_s[i].re = 0;
+        //sample_s[i].re = 0;
         sample_s[i].im = 0;
-        sample_d[i].re = 0;
+        //sample_d[i].re = 0;
         sample_d[i].im = 0;
       }
   

@@ -5,7 +5,23 @@
         <encoding>System</encoding>
     </override>
     <override>
+        <path>D:\Longer\智能车赛\my_programs\MAX&amp;FFT_K66\Board\inc\FFT.h</path>
+        <encoding>System</encoding>
+    </override>
+    <override>
         <path>D:\Longer\智能车赛\my_programs\MAX&amp;FFT_K66\Board\soc\FFT.c</path>
+        <encoding>System</encoding>
+    </override>
+    <override>
+        <path>D:\Longer\智能车赛\my_programs\MAX&amp;FFT_K66\Board\soc\LQ_LPTMR.c</path>
+        <encoding>System</encoding>
+    </override>
+    <override>
+        <path>D:\Longer\智能车赛\my_programs\MAX&amp;FFT_K66\Board\soc\LQ_SYSTICK.c</path>
+        <encoding>System</encoding>
+    </override>
+    <override>
+        <path>D:\Longer\智能车赛\my_programs\MAX&amp;FFT_K66\Libraries\Drive\inc\MK60_ADC.h</path>
         <encoding>System</encoding>
     </override>
 </userOverrides>
