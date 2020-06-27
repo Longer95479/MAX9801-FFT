@@ -1,5 +1,21 @@
 #include "include.h"
 
+/**
+ * @File name   FFT.h
+ * @brief       FFT运算相关实现函、及互相关运算、计算距离差
+ * @Author      Longer95479
+ * @date        2020/6/27
+ *
+ */
+
+
+/**
+ * @brief       创建一个复数
+ * @param       re0, im0
+ * @example
+ * @note        此函数无用，因为定义了一个局部变量
+ *
+ */
 type_complex complex_build(float re0, float im0)
 {
 	type_complex cx;
@@ -8,6 +24,14 @@ type_complex complex_build(float re0, float im0)
 	return cx;
 }
 
+
+/**
+ * @brief       复数加法
+ * @param       
+ * @example
+ * @note
+ *
+ */
 type_complex complex_add(type_complex cx1, type_complex cx2)
 {
 	type_complex cx_add;
@@ -15,6 +39,14 @@ type_complex complex_add(type_complex cx1, type_complex cx2)
 	cx_add.im = cx1.im + cx2.im;
 	return cx_add;
 }
+
+/**
+ * @brief       复数减法
+ * @param       
+ * @example
+ * @note
+ *
+ */
 type_complex complex_minus(type_complex cx1, type_complex cx2)
 {
 	type_complex cx_minus;
@@ -23,6 +55,13 @@ type_complex complex_minus(type_complex cx1, type_complex cx2)
 	return cx_minus;
 }
 
+/**
+ * @brief       复数乘法
+ * @param       
+ * @example
+ * @note
+ *
+ */
 type_complex complex_mult(type_complex cx1, type_complex cx2)
 {
 	type_complex cx_mult;
@@ -31,6 +70,16 @@ type_complex complex_mult(type_complex cx1, type_complex cx2)
 	return cx_mult;
 }
 
+
+/**
+ * @brief       把一个数与其二进制逆序的数交换位置，对输入数组的所有元素进行此操作。位码倒读
+ * @param       需要重新排序的数组 x[], 数组长度 N
+ * @example      x[4] = {0, 1, 2, 3}, 转换成二进制后：0b00, 0b01, 0b10, 0b11。
+ *              调用此函数 inver(x, 4);  得到新顺序：0b00, 0b10, 0b01, 0b11.
+ *
+ * @note        此函数仅模块内使用，被函数 void FFT(type_complex x[], const type_complex *Wnk, int N) 和 void NIFFT(type_complex x[], const type_complex *Wnk, int N) 调用
+ *
+ */
 static void inver(type_complex x[],int N)
 {
 	int n = (int)log2(N);
@@ -51,6 +100,15 @@ static void inver(type_complex x[],int N)
         
 #ifdef GOBAL
 
+/**
+ * @brief       生成旋转因此，用于 FFT 运算
+ * @param        model: 用于确定生成 FFT 的旋转因子还是 IFFT的旋转因子
+ *                Wnk: 指向生成的旋转因子的地址
+ *                N: 数组长度
+ * @example
+ * @note        本打算用于将生成的旋转因子存在 Flash, 但现已经弃用，且其可用性还未确定。可删除
+ *
+ */
 //const type_complex Wnk_fft_G[_N], Wnk_ifft_G[_N];
 void init_Wnk(uint8 model, type_complex *Wnk, int N)
 {
@@ -72,7 +130,15 @@ void init_Wnk(uint8 model, type_complex *Wnk, int N)
         
 #else
 
-// 此函数把 Wnk放在堆，最多只能存64k数据。因此我要把声明成const外部变量存储在flash
+/**
+ * @brief       生成旋转因此，用于 FFT 运算
+ * @param        model: 用于确定生成 FFT 的旋转因子还是 IFFT的旋转因子
+ *                Wnk: 指向生成的旋转因子的地址
+ *                N: 数组长度
+ * @example
+ * @note        本打算用于将生成的旋转因子存在堆内。由于最多只能存64k数据 因此现已经弃用。目前是 Wnk 和 iWnk 把声明成const外部变量存储在flash
+ *
+ */
 type_complex *init_Wnk(uint8 model, int N)   
 {  
     int i;  
@@ -95,7 +161,15 @@ type_complex *init_Wnk(uint8 model, int N)
 
 #endif
 
-
+/**
+ * @brief       快速傅里叶变换的实现函数
+ * @param       x[]: 时域的数据
+ *               Wnk: 旋转因子
+ *               N: 数据长度，必须为 2^n
+ *
+ * @example
+ * @note        此函数虽无返回值，但把 FFT 的结果即频域的值存储在 x[] 里，因此调用该函数后时域的数据被抹去。
+ */
 void FFT(type_complex x[], const type_complex *Wnk, int N)
 {
 	type_complex product;
@@ -125,6 +199,16 @@ void FFT(type_complex x[], const type_complex *Wnk, int N)
 	} 
 }
 
+/**
+ * @brief       逆快速傅里叶变换的实现函数的中间函数
+ * @param       x[]: 频域的数据
+ *               Wnk: 旋转因子
+ *               N: 数据长度，必须为 2^n
+ *
+ * @example
+ * @note        此函数虽无返回值，但把 NIFFT 的结果即时域的值存储在 x[] 里，因此调用该函数后频域的数据被抹去。
+ *              该函数的结果还需全部除以 N, 因此一般只被 void IFFT(type_complex x[], const type_complex *Wnk, int N) 调用
+ */
 void NIFFT(type_complex x[], const type_complex *Wnk, int N)
 {
 	type_complex product;
@@ -154,14 +238,29 @@ void NIFFT(type_complex x[], const type_complex *Wnk, int N)
 	} 
 }
 
-void IFFT(type_complex x[], const type_complex *Wnk, int N){
+/**
+ * @brief       逆快速傅里叶变换的实现函数，用于把 经过 NIFFT 处理后的 x[] 全部除以 N
+ * @param       x[]: 频域的数据
+ *               Wnk: 旋转因子
+ *               N: 数据长度，必须为 2^n
+ *
+ * @example
+ * @note        此函数虽无返回值，但把 NIFFT 的结果全部除以 N并存储在 x[] 里，因此调用该函数后 x[] 里的原始数据被抹去。
+ * 
+ */
+void IFFT(type_complex x[], const type_complex *Wnk, int N)
+{
 	NIFFT(x, Wnk, N);	
 	for(int i = 0; i < N; i++)
 		x[i] = complex_build(x[i].re/N, x[i].im/N);
 }
 
-
-////对波形标准化，寻找均值和最大幅值，数据分成32组分别处理
+/**
+ * @brief       对波形标准化，寻找均值和最大幅值，数据分成32组分别处理
+ * @param       sample[]: 待标准化的波形数据
+ * @example     
+ * @note        
+ */
 void amplitude_and_mean_process(type_complex sample[])
 {
    static int16 max[32] = {0}, min[32] = {0};
@@ -196,11 +295,16 @@ void amplitude_and_mean_process(type_complex sample[])
       }
 }
 
-
+/**
+ * @brief      带通滤波
+ * @param       sample[]: 待滤波的频域数据
+ * @example     
+ * @note        此函数实现频域滤波，直接将不想要的频率成分乘上一个很小的值
+ */
 static void low_pass_filter(type_complex sample[])
 {
   for (int i = 0; i < _N; i++)
-    if (i < 101 || (i > 409 && i < 1638) || i > 1946 || (i > 222 && i < 288) || (i > 1759 && i < 1825)) {
+    if (i < 203 || (i > 819 && i < 3276) || i > 3892 || (i > 448 && i < 573) || (i > 3522 && i < 3647)) {
       sample[i].re = 0.0001 * sample[i].re;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
       sample[i].im = 0.0001 * sample[i].im;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
     }
@@ -219,8 +323,8 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], c
       //int time;
       //LPTMR_TimeStartms();
       for(int i = 0; i < _N/2; i++) {
-        sample_s[i].re = (uint16_t)(ADC_Mid(ADC_s, ADC_CH_s, ADC_12bit)/**0.806*/);  //PTE0, ADC采集，单位是 mv，这行代码执行需要 19us
-        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC_d, ADC_CH_d, ADC_12bit)/**0.806*/);  //PTE1
+        sample_s[i].re = (uint16_t)(ADC_Mid(ADC_s, ADC_CH_s, ADC_12bit)/**0.806*/);  //ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC_d, ADC_CH_d, ADC_12bit)/**0.806*/); 
         systime.delay_us(62);      //延时以控制采样频率，目前是 DELTA_TIME = 100us 采集一次数据，计算公式为 DELTA_TIME * 10E6 - 38
       }
       //time = LPTMR_TimeGetms();
@@ -236,8 +340,8 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], c
       FFT(sample_d, Wnk_fft, _N);
       
       
-      //low_pass_filter(sample_s);
-      //low_pass_filter(sample_d);
+      low_pass_filter(sample_s);
+      low_pass_filter(sample_d);
       
       
       for (int i = 0; i < _N; i++) {
@@ -267,6 +371,7 @@ static int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N)
   for (int i = 0; i < N; i++)
   	max_queue[i] = max_queue_ori[i];
   
+  //冒泡排序
   for (int i = 0; i < N - 1; i++) {
         flag = 1;
 	for (int j = 0; j < N - 1 -i; j++)
@@ -287,6 +392,8 @@ static int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N)
   else
     return max_queue[(N - 1)/2]; 
   */
+  
+  //返回中位数
   return max_queue[(N - 1)/2]; 
 }
 

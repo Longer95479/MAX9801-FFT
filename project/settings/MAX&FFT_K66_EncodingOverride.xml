@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<userOverrides>
+    <override>
+        <path>D:\Longer\智能车赛\my_programs\MAX&amp;FFT_K66\APP\soc\main.c</path>
+        <encoding>System</encoding>
+    </override>
+    <override>
+        <path>D:\Longer\智能车赛\my_programs\MAX&amp;FFT_K66\Board\soc\FFT.c</path>
+        <encoding>System</encoding>
+    </override>
+</userOverrides>
