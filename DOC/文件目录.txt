@@ -2,6 +2,7 @@
 卷序列号为 9023-435F
 D:.
 │  clear.bat
+│  README.md
 │  文件目录.txt
 │  生成文件目录.bat
 │  
@@ -16,7 +17,9 @@ D:.
 ├─Board
 │  ├─inc
 │  │      ANO_DT.h
+│  │      FFT.h
 │  │      LG_EncTPM.h
+│  │      Longer_motor.h
 │  │      LQ_12864.h
 │  │      LQ_9AX.h
 │  │      LQ_ADC.h
@@ -39,10 +42,13 @@ D:.
 │  │      LQ_Ultrasonic.h
 │  │      LQ_WDOG.h
 │  │      picture.h
+│  │      Slide_average_filter.h
 │  │      
 │  └─soc
 │          ANO_DT.c
+│          FFT.c
 │          LG_EncTPM.c
+│          Longer_motor.c
 │          LQ_12864.c
 │          LQ_9AX.c
 │          LQ_ADC.c
@@ -64,6 +70,7 @@ D:.
 │          LQ_UART.c
 │          LQ_Ultrasonic.c
 │          LQ_WDOG.c
+│          Slide_average_filter.c
 │          
 ├─CMSIS
 │  ├─Libs
@@ -94,6 +101,7 @@ D:.
 │          
 ├─DOC
 │      修改之处.txt
+│      文件目录.txt
 │      
 ├─Libraries
 │  └─Drive
@@ -137,6 +145,7 @@ D:.
 │              MK66_TPM.c
 │              
 └─project
+    │  MAX&FFT_K66.eww
     │  template.dep
     │  template.ewd
     │  template.ewp
@@ -154,6 +163,9 @@ D:.
     │          ANO_DT.o
     │          ANO_DT.pbi
     │          ANO_DT.pbi.xcl
+    │          FFT.o
+    │          FFT.pbi
+    │          FFT.pbi.xcl
     │          fsl_clock.o
     │          fsl_clock.pbi
     │          fsl_clock.pbi.xcl
@@ -166,64 +178,49 @@ D:.
     │          LG_EncTPM.o
     │          LG_EncTPM.pbi
     │          LG_EncTPM.pbi.xcl
+    │          Longer_motor.o
+    │          Longer_motor.pbi
+    │          Longer_motor.pbi.xcl
     │          LQ_12864.o
-    │          LQ_12864.pbi
     │          LQ_12864.pbi.xcl
     │          LQ_9AX.o
-    │          LQ_9AX.pbi
     │          LQ_9AX.pbi.xcl
     │          LQ_ADC.o
-    │          LQ_ADC.pbi
     │          LQ_ADC.pbi.xcl
     │          LQ_CAMERA_MT9V034.pbi.xcl
     │          LQ_CAMERA_OV7725.o
-    │          LQ_CAMERA_OV7725.pbi
     │          LQ_CAMERA_OV7725.pbi.xcl
     │          LQ_CCD.o
-    │          LQ_CCD.pbi
     │          LQ_CCD.pbi.xcl
     │          LQ_FLASH.o
-    │          LQ_FLASH.pbi
     │          LQ_FLASH.pbi.xcl
     │          LQ_KEY.o
-    │          LQ_KEY.pbi
     │          LQ_KEY.pbi.xcl
     │          LQ_LED.o
     │          LQ_LED.pbi
     │          LQ_LED.pbi.xcl
     │          LQ_LPTMR.o
-    │          LQ_LPTMR.pbi
     │          LQ_LPTMR.pbi.xcl
     │          LQ_MOTOR.o
-    │          LQ_MOTOR.pbi
     │          LQ_MOTOR.pbi.xcl
     │          LQ_MPU6050.o
-    │          LQ_MPU6050.pbi
     │          LQ_MPU6050.pbi.xcl
     │          LQ_MT9V034.pbi.xcl
     │          LQ_OV7725.o
-    │          LQ_OV7725.pbi
     │          LQ_OV7725.pbi.xcl
     │          LQ_PIT.o
-    │          LQ_PIT.pbi
     │          LQ_PIT.pbi.xcl
     │          LQ_SD5.o
-    │          LQ_SD5.pbi
     │          LQ_SD5.pbi.xcl
     │          LQ_SGP18T.o
-    │          LQ_SGP18T.pbi
     │          LQ_SGP18T.pbi.xcl
     │          LQ_SYSTICK.o
-    │          LQ_SYSTICK.pbi
     │          LQ_SYSTICK.pbi.xcl
     │          LQ_UART.o
-    │          LQ_UART.pbi
     │          LQ_UART.pbi.xcl
     │          LQ_Ultrasonic.o
-    │          LQ_Ultrasonic.pbi
     │          LQ_Ultrasonic.pbi.xcl
     │          LQ_WDOG.o
-    │          LQ_WDOG.pbi
     │          LQ_WDOG.pbi.xcl
     │          main.o
     │          main.pbi
@@ -270,6 +267,9 @@ D:.
     │          MK66_TPM.o
     │          MK66_TPM.pbi
     │          MK66_TPM.pbi.xcl
+    │          Slide_average_filter.o
+    │          Slide_average_filter.pbi
+    │          Slide_average_filter.pbi.xcl
     │          start.o
     │          start.pbi
     │          start.pbi.xcl
@@ -277,9 +277,13 @@ D:.
     │          template.pbd
     │          template.pbd.browse
     │          template.pbd.linf
+    │          template.pbd~RF165aab6b.TMP
     │          template.pbw
     │          
     └─settings
+            ICM20602.wsdt
+            MAX&FFT_K66.wsdt
+            MAX&FFT_K66_EncodingOverride.xml
             template.crun
             template.dbgdt
             template.Debug.cspy.bat
@@ -287,4 +291,6 @@ D:.
             template.Debug.driver.xcl
             template.Debug.general.xcl
             template.dnx
+            template.reggroups
+            template.wsdt
             
