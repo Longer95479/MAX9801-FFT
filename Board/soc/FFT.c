@@ -1,3 +1,5 @@
+#define FFT_GLOBALS
+
 #include "include.h"
 
 /**
@@ -264,6 +266,48 @@ void IFFT(type_complex x[], const type_complex *Wnk, int N)
 		x[i] = complex_build(x[i].re/N, x[i].im/N);
 }
 
+
+/**
+ * @brief       4个麦克风数据的AD采集
+ * @param
+ * @return
+ * @example
+ * @note        如果要修改采集引脚和存储数组，直接在函数内部修改
+ */
+extern type_complex sample_sx[_N], sample_dx[_N], sample_sy[_N], sample_dy[_N], z[_N];
+void sample_get(void)
+{
+  for(int i = 0; i < _N; i++) {
+        sample_sx[i].re = 0;
+        sample_sx[i].im = 0;
+        
+        sample_dx[i].re = 0;      
+        sample_dx[i].im = 0;  
+        
+        sample_sy[i].re = 0;
+        sample_sy[i].im = 0;
+        
+        sample_dy[i].re = 0;
+        sample_dy[i].im = 0;
+      }
+  
+      //int time;
+      //LPTMR_TimeStartms();
+      for(int i = 0; i < _N/2; i++) {
+        sample_sx[i].re = (float)(ADC_Mid(ADC0, ADC0_SE8, ADC_12bit)/**0.806*/);  //ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_dx[_N/2-i-1].re = (float)(ADC_Mid(ADC0, ADC0_SE9, ADC_12bit)/**0.806*/); 
+        
+        sample_sy[i].re = (float)(ADC_Mid(ADC1, ADC1_SE6a, ADC_12bit)/**0.806*/);  //ADC采集，单位是 mv，这行代码执行需要 19us
+        sample_dy[_N/2-i-1].re = (float)(ADC_Mid(ADC1, ADC1_SE7a, ADC_12bit)/**0.806*/); 
+                
+        systime.delay_us(24);      //延时以控制采样频率，目前是 DELTA_TIME = 100us 采集一次数据，计算公式为 DELTA_TIME * 10E6 - 19 * 4
+      }
+      //time = LPTMR_TimeGetms();
+      //printf("%d\n", time);
+  
+}
+
+
 /**
  * @brief       对波形标准化，寻找均值和最大幅值，数据分成32组分别处理
  * @param       sample[]: 待标准化的波形数据
@@ -322,27 +366,21 @@ static void low_pass_filter(type_complex sample[])
 }
 
 
-
-
-//r_d - r_s
-void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s)
+/**
+ * @brief       互相关运算
+ * @param        sample_d[]: 一组信号
+ *                sample_s[]:另一组信号
+ *                z[]: 用于存储互相关结果
+ *                Wnk_fft: fft的旋转因子
+ *                Wnk_ifft: ifft的旋转因子
+ * @return
+ * @example
+ * @note        r_d - r_s, 相当于 sample_s[] 不动，对 sample_d[] 进行平移
+ *
+ */
+void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft/*, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s*/)
 {
-  for(int i = 0; i < _N; i++) {
-        //sample_s[i].re = 0;
-        sample_s[i].im = 0;
-        //sample_d[i].re = 0;
-        sample_d[i].im = 0;
-      }
   
-      //int time;
-      //LPTMR_TimeStartms();
-      for(int i = 0; i < _N/2; i++) {
-        sample_s[i].re = (uint16_t)(ADC_Mid(ADC_s, ADC_CH_s, ADC_12bit)/**0.806*/);  //ADC采集，单位是 mv，这行代码执行需要 19us
-        sample_d[_N/2-i-1].re = (uint16_t)(ADC_Mid(ADC_d, ADC_CH_d, ADC_12bit)/**0.806*/); 
-        systime.delay_us(62);      //延时以控制采样频率，目前是 DELTA_TIME = 100us 采集一次数据，计算公式为 DELTA_TIME * 10E6 - 38
-      }
-      //time = LPTMR_TimeGetms();
-      //printf("%d\n", time);
       
       amplitude_and_mean_process(sample_s);
       amplitude_and_mean_process(sample_d);
@@ -372,6 +410,17 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], c
 }
 
 
+/**
+ * @brief       中位数滤波
+ * @param        max_now: 新计算出的互相关最大值索引
+ *                max_queue_ori[]: 历史索引，存放在此队列内
+ *                N: 队列长度
+ *
+ * @return      max_queue[(N - 1)/2]: 
+ * @example     
+ * @note        用于对互相关结果的最大值索引 max  进行滤波，该函数只被 distance_difference 函数调用
+ *
+ */
 static int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N)
 {
   int max_queue[N], flag;
@@ -411,13 +460,24 @@ static int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N)
   return max_queue[(N - 1)/2]; 
 }
 
-
-//r_d - r_s
-float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type *ADC_d, ADC_Type *ADC_s)
+/**
+ * @brief       TDOA
+ * @param        sample_d[]: 一组信号
+ *                sample_s[]:另一组信号
+ *                z[]: 用于存储互相关结果
+ *                Wnk_fft: fft的旋转因子
+ *                Wnk_ifft: ifft的旋转因子
+ *
+ * @return      距离差
+ * @example
+ * @note        r_d - r_s, 相当于 sample_s[] 不动，对 sample_d[] 进行平移
+ *
+ */
+float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft/*, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type *ADC_d, ADC_Type *ADC_s*/)
 {
   static int16 max_now, max_chosen, max_queue[9] = {0}; //队列数组，0进
    
-  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC_d, ADC_s);
+  xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft/*, ADC_CH_d, ADC_CH_s, ADC_d, ADC_s*/);
        
   max_now = 0;
   for (int i = 0; i < _N; i++)
@@ -431,12 +491,12 @@ float distance_difference(float V_sound, type_complex sample_d[], type_complex s
 
 
 //音速辨识，测量十次。
-float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type *ADC_d, ADC_Type *ADC_s)
+float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft/*, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type *ADC_d, ADC_Type *ADC_s*/)
 {  
   static int max[TIMES];
   
   for (int i = 0; i < TIMES; i++) {
-    xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft, ADC_CH_d, ADC_CH_s, ADC_d, ADC_s);
+    xcorr(sample_d, sample_s, z, Wnk_fft, Wnk_ifft/*, ADC_CH_d, ADC_CH_s, ADC_d, ADC_s*/);
     
     max[i] = 0;
     for (int j = 0; j < _N; j++)
@@ -457,8 +517,7 @@ float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], t
   
 }
 
-
-const type_complex kWnk_fft[] = {
+FFT_EXT const type_complex kWnk_fft[] = {
 	{1.000000, -0.000000},  {0.999999, -0.001534},  {0.999995, -0.003068},  {0.999989, -0.004602},
 {0.999981, -0.006136},  {0.999971, -0.007670},  {0.999958, -0.009204},  {0.999942, -0.010738},
 {0.999925, -0.012272},  {0.999905, -0.013805},  {0.999882, -0.015339},  {0.999858, -0.016873},
@@ -1485,7 +1544,7 @@ const type_complex kWnk_fft[] = {
 {0.999981, 0.006136},   {0.999989, 0.004602},   {0.999995, 0.003068},   {0.999999, 0.001534},
 };
 
-const type_complex kWnk_ifft[] = {
+FFT_EXT const type_complex kWnk_ifft[] = {
 {1.000000, 0.000000},   {0.999999, 0.001534},   {0.999995, 0.003068},   {0.999989, 0.004602},
 {0.999981, 0.006136},   {0.999971, 0.007670},   {0.999958, 0.009204},   {0.999942, 0.010738},
 {0.999925, 0.012272},   {0.999905, 0.013805},   {0.999882, 0.015339},   {0.999858, 0.016873},
@@ -2511,6 +2570,4 @@ const type_complex kWnk_ifft[] = {
 {0.999925, -0.012272},  {0.999942, -0.010738},  {0.999958, -0.009204},  {0.999971, -0.007670},
 {0.999981, -0.006136},  {0.999989, -0.004602},  {0.999995, -0.003068},  {0.999999, -0.001534},	
 };
-
-
 

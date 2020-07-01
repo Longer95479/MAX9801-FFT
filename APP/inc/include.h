@@ -68,6 +68,7 @@
 #include "FFT.h"
 #include "Slide_average_filter.h"
 #include "Longer_motor.h"
+#include "LG_GLOBAL.h"
 
 
 #endif

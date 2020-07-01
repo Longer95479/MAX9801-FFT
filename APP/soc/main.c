@@ -9,10 +9,6 @@
  */
 
 #include "include.h"
-type_complex sample_sx[_N], sample_dx[_N], sample_sy[_N], sample_dy[_N], z[_N];
-
-extern const type_complex kWnk_fft[];
-extern const type_complex kWnk_ifft[];
 
 int main(void) 
 {
@@ -52,11 +48,13 @@ int main(void)
     
     while(1) {
       
+      sample_get();
+      
       //LPTMR_TimeStartms();
-      float sx = distance_difference(V_sound, sample_dx, sample_sx, z, kWnk_fft, kWnk_ifft, ADC0_SE9, ADC0_SE8, ADC0, ADC0);
+      float sx = distance_difference(V_sound, sample_dx, sample_sx, z, kWnk_fft, kWnk_ifft/*, ADC0_SE9, ADC0_SE8, ADC0, ADC0*/);
       //time = LPTMR_TimeGetms();
       
-      float sy = distance_difference(V_sound, sample_dy, sample_sy, z, kWnk_fft, kWnk_ifft, ADC1_SE7a, ADC1_SE6a, ADC1, ADC1);
+      float sy = distance_difference(V_sound, sample_dy, sample_sy, z, kWnk_fft, kWnk_ifft/*, ADC1_SE7a, ADC1_SE6a, ADC1, ADC1*/);
       
       car_move(sx, sy);
            
