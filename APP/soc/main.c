@@ -24,9 +24,10 @@ int main(void)
     /* 优先级配置 抢占优先级0  子优先级2   越小优先级越高  抢占优先级可打断别的中断 */
     NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));
     
+    NVIC_SetPriority(LPUART0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,1));
+    
     LED_Init();
     
-    LPTMR_PulseInit(LPT0_ALT1,32768,LPT_Rising);  
     systime.init(); 
     
     UART_Init(UART4, 115200);           //用于显示波形
@@ -36,7 +37,9 @@ int main(void)
     
     motor_init();
     
-    int time;
+    LPTMR_for_ADC_trigger();
+    
+    //int time;
     
     //type_complex *Wnk_fft, *Wnk_ifft;
     //Wnk_fft = init_Wnk(fft, _N);
@@ -48,15 +51,16 @@ int main(void)
     
     while(1) {
       
-      sample_get();
+      
+      //**sample_get();
       
       //LPTMR_TimeStartms();
-      float sx = distance_difference(V_sound, sample_dx, sample_sx, z, kWnk_fft, kWnk_ifft/*, ADC0_SE9, ADC0_SE8, ADC0, ADC0*/);
+      //** float sx = distance_difference(V_sound, sample_dx, sample_sx, z, kWnk_fft, kWnk_ifft/*, ADC0_SE9, ADC0_SE8, ADC0, ADC0*/);
       //time = LPTMR_TimeGetms();
       
-      float sy = distance_difference(V_sound, sample_dy, sample_sy, z, kWnk_fft, kWnk_ifft/*, ADC1_SE7a, ADC1_SE6a, ADC1, ADC1*/);
+      //** float sy = distance_difference(V_sound, sample_dy, sample_sy, z, kWnk_fft, kWnk_ifft/*, ADC1_SE7a, ADC1_SE6a, ADC1, ADC1*/);
       
-      car_move(sx, sy);
+      //** car_move(sx, sy);
            
       /*
       IFFT(sample_sx, kWnk_ifft, _N);
@@ -85,11 +89,11 @@ int main(void)
       }
       */
       //printf("%d\n", time);
-      
+      /*
       int max_x = (sx / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
       int max_y = (sy / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1; 
       ANO_DT_send_int16((int16)(max_x - _N/2 + 1), (int16)(max_y - _N/2 + 1), 0, 0, 0, 0, 0, 0);
-      
+      */
     }
 }
 

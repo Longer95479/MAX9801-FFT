@@ -168,3 +168,24 @@ void UART4_RX_TX_IRQHandler(void)
     
 }
 
+/**
+ * @brief       测试 LPTMR 中断
+ * @note        此中断无法进入，不知为何
+ *
+ */
+void LPTMR0_IRQHandler(void)
+{
+  static int16_t cnt = 0;
+  
+  cnt++;
+        
+  if (cnt == 100) {
+    LED_Reverse(1);
+    cnt = 0;
+  }
+        
+  LPTMR0_CSR |= LPTMR_CSR_TCF_MASK;
+    
+    
+}
+

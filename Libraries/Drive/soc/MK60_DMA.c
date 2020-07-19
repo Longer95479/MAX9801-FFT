@@ -211,5 +211,3 @@ void DMA_Count_Reset(DMA_CHn CHn)
 {
     DMA_CITER_ELINKNO(CHn) = count_init[CHn] ;
 }
-
-

@@ -200,5 +200,4 @@ uint16_t ADC_Ave(ADC_Type * adc_n,  ADCn_Ch_e adc_ch, ADC_nbit bit, uint16_t N);
 
 
 
-
 #endif /* __MK60_ADC16_H__ */
