@@ -1,20 +1,29 @@
 /**
  * @Platform    龙邱K66核心板        IAR 8.32.1
  * @Fielname    ADC&DMA.c
- * @brief       ADC连续转化并利用DMA 传输到内存，并对数据类型进行转化的相关函数
+ * @brief       ADC由 LPTMR 触发并利用DMA 传输到内存，并对数据类型进行转化的相关函数
  * @Author      Longer95479
  * @Email       371573369@qq.com
  * @Date        2020/7/17
  *
  */
 
+
+/**
+ * @brief       激活存储AD引脚编号的全局变量，利用 DMA 自动更改引脚（通过写入 ADC_SC1A[ADCH] 来实现）
+ */
+#define ADCDMA_GLOBALS   
+   
 #include "include.h"
 
 /**
  * @brief 内部使用函数声明
  */
-static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn byten, uint32_t count, DMA_xOFF_mode_EnumType xOFF_mode, DMA_sources);
+static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn byten, int16_t soff, int16_t doff, uint16_t count, int32_t slast, int32_t dlast, DMA_sources DMA_source);
 static void ADC_Start_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit);
+static void LPTMR_for_ADC_trigger(uint32_t us);
+
+
 
 
 
@@ -28,8 +37,21 @@ static void ADC_Start_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit);
  */
 void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str)
 { 
-  DMA_Init_for_ADC(init_str->CHn, init_str->SADDR, init_str->DADDR, DMA_BYTE2, _N/2, init_str->xOFF_mode, init_str->DMA_source);
+  DMA_Init_for_ADC(init_str->CHn,                //选择DMA通道
+                   init_str->SADDR,             //选择源地址
+                   init_str->DADDR,             //选择目的地址
+                   init_str->byten,             //源数据和目的数据位宽
+                   init_str->soff,              //源地址偏移
+                   init_str->doff,              //目的地址偏移
+                   init_str->count,             //主循环次数
+                   init_str->slast,             //主循环结束后源地址偏移
+                   init_str->dlast,             //主循环结束后目的地址偏移
+                   init_str->DMA_source);       //选择DMA触发源
+  
   ADC_Start_for_DMA(init_str->adc_n, init_str->adc_ch, ADC_16bit);
+  
+  LPTMR_for_ADC_trigger(init_str->us);
+  
 }
 
 
@@ -37,14 +59,15 @@ void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str)
 
 /**
  * @brief       LPTMR定时触发ADC采集，周期为100us
- * @param
+ * @param       us：触发周期，单位为微秒
  * @return
  * @example
- * @note        LPTMR0_CMR = xus * 50 /32
+ * @note        LPTMR0_CMR = xus * 50 /32       xus最大为41942us
+ *              按道理 CSR[TIE] 和 CSR[TCF] 都置位应产生中断，但实际却进不去中断函数。
  * @date        2020/7/19
  *
  */
-void LPTMR_for_ADC_trigger(void)
+static void LPTMR_for_ADC_trigger(uint32_t us)
 {
 
 
@@ -54,7 +77,7 @@ void LPTMR_for_ADC_trigger(void)
 
     LPTMR0_CSR = 0x00;                                          //先关了LPT，自动清计数器的值
 
-    LPTMR0_CMR = 15625;                                            //设置比较值
+    LPTMR0_CMR = ((us < 41943) ? us : 41942) * 50 / 32;       //设置比较值
 
     //选择时钟源
     LPTMR0_PSR  =   ( 0
@@ -73,7 +96,7 @@ void LPTMR_for_ADC_trigger(void)
                     //| LPTMR_CSR_TFC_MASK      //0:计数值等于比较值就复位；1：溢出复位（注释表示0）
                    );
     
-    SIM->SOPT7 = 0x8e8eU;
+    SIM->SOPT7 = 0x8e8eU;       //设置 LPTMR 作为 ADC 的触发信号
 }
 
 
@@ -87,41 +110,44 @@ void LPTMR_for_ADC_trigger(void)
  * @date        2020/7/7
  *
  */
-void PIT_Init_for_DMA(uint32_t us)
-{
+//void PIT_Init_for_DMA(uint32_t us)
+//{
   //PIT 用的是 Bus Clock 总线频率
 
     /* 开启时钟*/
-    SIM_SCGC6       |= SIM_SCGC6_PIT_MASK;                          
+//    SIM_SCGC6       |= SIM_SCGC6_PIT_MASK;                          
 
     /* 使能PIT定时器时钟 ，调试模式下继续运行 */
-    PIT_MCR         &= ~(PIT_MCR_MDIS_MASK | PIT_MCR_FRZ_MASK );   
+//    PIT_MCR         &= ~(PIT_MCR_MDIS_MASK | PIT_MCR_FRZ_MASK );   
     
     /* 设置触发周期 */
-    PIT_LDVAL(PIT0)  = us * bus_clk;     
-    PIT_LDVAL(PIT1)  = us * bus_clk;     
-    PIT_LDVAL(PIT2)  = us * bus_clk;     
-    PIT_LDVAL(PIT3)  = us * bus_clk;  
+//    PIT_LDVAL(PIT0)  = us * bus_clk;     
+//    PIT_LDVAL(PIT1)  = us * bus_clk;     
+//    PIT_LDVAL(PIT2)  = us * bus_clk;     
+//    PIT_LDVAL(PIT3)  = us * bus_clk;  
     
     /* 使能 PITn定时器 */
-    PIT_TCTRL(PIT0) |= PIT_TCTRL_TEN_MASK;   
-    PIT_TCTRL(PIT1) |= PIT_TCTRL_TEN_MASK;   
-    PIT_TCTRL(PIT2) |= PIT_TCTRL_TEN_MASK;   
-    PIT_TCTRL(PIT3) |= PIT_TCTRL_TEN_MASK;   
-}
+//    PIT_TCTRL(PIT0) |= PIT_TCTRL_TEN_MASK;   
+//    PIT_TCTRL(PIT1) |= PIT_TCTRL_TEN_MASK;   
+//    PIT_TCTRL(PIT2) |= PIT_TCTRL_TEN_MASK;   
+//    PIT_TCTRL(PIT3) |= PIT_TCTRL_TEN_MASK;   
+//}
 
 
 
    
 /**
  * @brief       DMA初始化，读取ADC数据到内存
- * @param       DMA_CHn: 通道号（DMA_CH0 ~ DMA_CH15）
- *               SADDR: 源地址                                      ADC寄存器
+ * @param       CHn: 通道号（DMA_CH0 ~ DMA_CH15）
+ *               SADDR: 源地址                                      
  *               DADDR: 目的地址
- *               DMA_BYTEn: 每次DMA传输字节数                  1(2 bytes)
- *               count: 一个主循环传输字节数                     2048
- *               xOFF_mode : 每次传输后地址是递增还是递减的模式确定
- *              DMA_source：DMA传输的触发源
+ *               byten: 源地址和目的地址的数据宽度                 1(2 bytes)
+ *               soff: 源地址偏移
+ *               doff：目标地址偏移
+ *               count: 主循环次数                     2048（但若设置了通道间链接的功能，最大只能为511次,因此需要分成四次进行，中间用中断更改源地址）
+ *               slast：主循环结束后源地址的偏移
+ *               dlast：主循环结束后目标地址的偏移
+ *               DMA_source：DMA传输的触发源
  * @return
  * @example
  * @note        次循环一次传输16bit(NBYTES = 2)，源数据和目标数据宽度都是16bit，DOFF = 8 BYTES, 要进行2048次主循环
@@ -129,7 +155,7 @@ void PIT_Init_for_DMA(uint32_t us)
  * @date 2020/7/16
  *
  */                             
-static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn byten, uint32_t count, DMA_xOFF_mode_EnumType xOFF_mode, DMA_sources DMA_source)
+static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn byten, int16_t soff, int16_t doff, uint16_t count, int32_t slast, int32_t dlast, DMA_sources DMA_source)
 {
 
     uint8_t BYTEs = (byten == DMA_BYTE1 ? 1 : (byten == DMA_BYTE2 ? 2 : (byten == DMA_BYTE4 ? 4 : 16 ) ) ); //计算传输字节数
@@ -141,8 +167,8 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
     /* 配置 DMA 通道 的 传输控制块 TCD ( Transfer Control Descriptor ) */
     DMA_SADDR(CHn) =    (uint32_t)SADDR;                         // 设置  源地址
     DMA_DADDR(CHn) =    (uint32_t)DADDR;                         // 设置目的地址
-    DMA_SOFF(CHn)  =    0x00u;                              // 设置源地址偏移 = 0x0, 即不变
-    DMA_DOFF(CHn)  =    (xOFF_mode == UP) ? (4 * BYTEs) : (-4 * BYTEs);                              // 每次传输后，目的地址加 4 * BYTEs  = 8 bytes
+    DMA_SOFF(CHn)  =    soff;                              // 设置源地址偏移 
+    DMA_DOFF(CHn)  =    doff;                            // 目的地址偏移
 
     DMA_ATTR(CHn)  =    (0
                          | DMA_ATTR_SMOD(0x0)                // 源地址模数禁止  Source address modulo feature is disabled
@@ -151,8 +177,11 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
                          | DMA_ATTR_DSIZE(byten)             // 目标数据位宽 ：DMA_BYTEn  。  设置参考  SSIZE
                         );
 
-    DMA_CITER_ELINKNO(CHn)  = DMA_CITER_ELINKNO_CITER(count); //当前主循环次数 
-    DMA_BITER_ELINKNO(CHn)  = DMA_BITER_ELINKNO_BITER(count); //起始主循环次数
+    //**DMA_CITER_ELINKNO(CHn)  = DMA_CITER_ELINKNO_CITER(count); //当前主循环次数 
+    //**DMA_BITER_ELINKNO(CHn)  = DMA_BITER_ELINKNO_BITER(count); //起始主循环次数
+    
+    DMA_CITER_ELINKYES(CHn)  |= DMA_CITER_ELINKYES_CITER(count); //当前主循环次数 
+    DMA_BITER_ELINKYES(CHn)  |= DMA_BITER_ELINKYES_BITER(count); //起始主循环次数
 
     DMA_CR &= ~DMA_CR_EMLM_MASK;                            // CR[EMLM] = 0
 
@@ -161,8 +190,8 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
 
 
     /* 配置 DMA 传输结束后的操作 */
-    DMA_SLAST(CHn)      =   0;                              //调整  源地址的附加值,主循环结束后恢复  源地址
-    DMA_DLAST_SGA(CHn)  =   (xOFF_mode == UP) ? (-count * 8) : (count * 8); //调整目的地址的附加值,主循环结束后恢复目的地址或者保持地址
+    DMA_SLAST(CHn)      =   slast;                              //调整  源地址的附加值,主循环结束后恢复  源地址
+    DMA_DLAST_SGA(CHn)  =   dlast;/*(xOFF_mode == UP) ? (-count * 8) : (count * 8)*/ //调整目的地址的附加值,主循环结束后恢复目的地址或者保持地址
     DMA_CSR(CHn)        =   (0
                              | DMA_CSR_BWC(3)               //带宽控制,每读一次，eDMA 引擎停止 8 个周期（0不停止；1保留；2停止4周期；3停止8周期）
                              | DMA_CSR_DREQ_MASK            //主循环结束后停止硬件请求
@@ -181,6 +210,38 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
     DMA_EN(CHn);                                    //使能通道CHn 硬件请求
     DMA_IRQ_EN(CHn);                                //允许DMA通道传输
 }
+
+
+/**
+ * @brief       链接DMA通道，实现自动更换DMA通道传输
+ * @param       to_link_CH：要链接其他通道的通道
+ *               be_linked_CH：被链接的通道
+ *               link_type：链接类次：主循环结尾链接 或 主循环结尾链接
+ * @return
+ * @example
+ * @note
+ * @date        2020/7/20
+ *
+ */
+static void DMA_set_channel_link(DMA_CHn to_link_CH, DMA_CHn be_linked_CH, link_type_EnumType link_type)
+{
+  switch (link_type) {
+     case DMA_minor_link: DMA_CITER_ELINKYES(to_link_CH) = (DMA_CITER_ELINKYES(to_link_CH)               //次循环结尾链接
+                                                          | DMA_CITER_ELINKYES_ELINK(1)             //使能次循环结束的通道间链接
+                                                          | DMA_CITER_ELINKYES_LINKCH(be_linked_CH)     //选择被链接的通道
+                                                      );
+                         break;
+    
+    case DMA_major_link: DMA_CSR(to_link_CH) = (DMA_CSR(to_link_CH)               //主循环结束链接
+                                              | DMA_CSR_MAJORELINK(1)         //使能主循环结尾的通道间链接
+                                              | DMA_CSR_MAJORLINKCH(be_linked_CH)      //选择被链接的通道
+                                               );
+                        break;
+      
+  }
+  
+}
+
 
 
 /**

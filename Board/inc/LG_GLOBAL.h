@@ -16,3 +16,15 @@ FFT_EXT type_complex sample_sx[_N], sample_dx[_N], sample_sy[_N], sample_dy[_N],
  */
 extern const type_complex kWnk_fft[];
 extern const type_complex kWnk_ifft[];
+
+
+
+
+#ifdef  ADCDMA_GLOBALS
+#define ADCDMA_EXT
+#else
+#define ADCDMA_EXT extern
+#endif  //ADCDMA_GLOBALS
+
+ADCDMA_EXT uint16_t g_ADC0_mux[2];
+ADCDMA_EXT uint16_t g_ADC1_mux[2];

@@ -37,7 +37,9 @@ int main(void)
     
     motor_init();
     
-    LPTMR_for_ADC_trigger();
+    //LPTMR_for_ADC_trigger(1e6);
+    //NVIC_EnableIRQ(LPTMR0_IRQn);        //开启中断向量表处的LPTMR中断
+    
     
     //int time;
     

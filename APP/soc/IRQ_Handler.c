@@ -177,14 +177,14 @@ void LPTMR0_IRQHandler(void)
 {
   static int16_t cnt = 0;
   
-  cnt++;
+  //**cnt++;
         
-  if (cnt == 100) {
+  //**if (cnt == 100) {
     LED_Reverse(1);
-    cnt = 0;
-  }
+    //**cnt = 0;
+  //**}
         
-  LPTMR0_CSR |= LPTMR_CSR_TCF_MASK;
+  LPTMR0_CSR |= LPTMR_CSR_TCF_MASK;     //清楚比较完成标志（当比较完成标志和外设处中断使能标志同时置位时，中断产生）
     
     
 }
