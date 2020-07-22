@@ -3,6 +3,12 @@
 
 
 /**
+ * @brief       开启通道间链接的情况下主循环的最大次数
+ */
+#define COUNT_MAX       511
+
+
+/**
  * @brief       DMA 通道间链接的类型枚举
  */
 typedef enum{
@@ -32,9 +38,6 @@ typedef struct{
   ADC_Type      *adc_n;
   ADCn_Ch_e     adc_ch;
   
-  //LPTMR 初始化字段
-  uint32_t      us;
-  
 } ADC_in_DMA_mode_Init_StrType;
 
 
@@ -47,5 +50,17 @@ typedef struct{
  *
  */
 void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str);
+
+
+/**
+ * @brief       ADC_in_DMA_mode 的实例配置
+ * @param       us：LPTMR 触发 ADC 采集的周期
+ * @return
+ * @example
+ * @note
+ * @date        2020/7/22
+ *
+ */
+void ADC_in_DMA_mode_instance_conf(uint32_t us);
 
 #endif

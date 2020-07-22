@@ -189,3 +189,14 @@ void LPTMR0_IRQHandler(void)
     
 }
 
+
+void ADC0_IRQHandler(void)
+{
+  ;
+}
+
+void ADC1_IRQHandler(void)
+{
+  ;
+}
+

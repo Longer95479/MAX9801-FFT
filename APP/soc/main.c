@@ -37,6 +37,8 @@ int main(void)
     
     motor_init();
     
+    ADC_in_DMA_mode_instance_conf(100);
+    
     //LPTMR_for_ADC_trigger(1e6);
     //NVIC_EnableIRQ(LPTMR0_IRQn);        //开启中断向量表处的LPTMR中断
     
@@ -53,7 +55,7 @@ int main(void)
     
     while(1) {
       
-      
+       ;
       //**sample_get();
       
       //LPTMR_TimeStartms();

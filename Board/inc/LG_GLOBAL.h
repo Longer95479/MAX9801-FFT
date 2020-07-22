@@ -26,5 +26,8 @@ extern const type_complex kWnk_ifft[];
 #define ADCDMA_EXT extern
 #endif  //ADCDMA_GLOBALS
 
-ADCDMA_EXT uint16_t g_ADC0_mux[2];
-ADCDMA_EXT uint16_t g_ADC1_mux[2];
+/**
+ * @brief       引脚复用存储函数，用于 DMA  传输，实现自动更换ADC 通道的功能
+ */
+extern uint8_t g_ADC0_mux[2];
+extern uint8_t g_ADC1_mux[2];

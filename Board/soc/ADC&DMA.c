@@ -15,6 +15,13 @@
 #define ADCDMA_GLOBALS   
    
 #include "include.h"
+   
+/**
+ * @brief       ADC 引脚复用的存储数组，用于被 DMA 传送
+ */ 
+uint8_t g_ADC0_mux[2] = {ADC0_SE8, ADC0_SE9};
+uint8_t g_ADC1_mux[2] = {ADC1_SE6a, ADC1_SE7a};
+   
 
 /**
  * @brief 内部使用函数声明
@@ -22,6 +29,112 @@
 static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn byten, int16_t soff, int16_t doff, uint16_t count, int32_t slast, int32_t dlast, DMA_sources DMA_source);
 static void ADC_Start_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit);
 static void LPTMR_for_ADC_trigger(uint32_t us);
+static void DMA_set_channel_link(DMA_CHn to_link_CH, DMA_CHn be_linked_CH, link_type_EnumType link_type);
+
+
+
+/**
+ * @brief       ADC_in_DMA_mode 的实例配置
+ * @param
+ * @return
+ * @example
+ * @note
+ * @date        2020/7/22
+ *
+ */
+void ADC_in_DMA_mode_instance_conf(uint32_t us)
+{
+  // init_str0 配置了用于传输 ADC0 数据的 DMA0
+  ADC_in_DMA_mode_Init_StrType init_str0;  
+  init_str0.CHn = DMA_CH0;
+  init_str0.SADDR = (void *)&ADC0_RA;
+  init_str0.DADDR = sample_sx;
+  init_str0.byten = DMA_BYTE2;
+  init_str0.soff = 0x0;
+  init_str0.doff = sizeof(uint32_t);
+  init_str0.count = COUNT_MAX;
+  init_str0.slast = 0; 
+  init_str0.dlast = -COUNT_MAX;         //此处由0 改为 -COUNT_MAX
+  init_str0.DMA_source = DMA_ADC0;
+  
+  init_str0.adc_n = ADC0;
+  init_str0.adc_ch = ADC0_SE8;
+  
+  
+  // init_str1 配置了用于更改 ADC引脚 的 DMA1
+  ADC_in_DMA_mode_Init_StrType init_str1;  
+  init_str1.CHn = DMA_CH1;
+  init_str1.SADDR = g_ADC0_mux;
+  init_str1.DADDR = (void *)&ADC0_SC1A;
+  init_str1.byten = DMA_BYTE1;
+  init_str1.soff = sizeof(uint8_t);
+  init_str1.doff = 0x0;
+  init_str1.count = 2;
+  init_str1.slast = -2 * sizeof(uint8_t);
+  init_str1.dlast = 0x0;
+  init_str1.DMA_source = DMA_Always_EN3;
+  
+  init_str1.adc_n = ADC0;
+  init_str1.adc_ch = ADC0_SE8;
+  
+  
+  // init_str2 配置了用于传输 ADC1 数据的 DMA2
+  ADC_in_DMA_mode_Init_StrType init_str2;  
+  init_str2.CHn = DMA_CH2;
+  init_str2.SADDR = (void *)&ADC1_RA;
+  init_str2.DADDR = sample_sy;
+  init_str2.byten = DMA_BYTE2;
+  init_str2.soff = 0x0;
+  init_str2.doff = sizeof(uint32_t);
+  init_str2.count = COUNT_MAX;
+  init_str2.slast = 0x0;
+  init_str2.dlast = -COUNT_MAX;
+  init_str2.DMA_source = DMA_ADC1;
+  
+  init_str2.adc_n = ADC1;
+  init_str2.adc_ch = ADC1_SE6a; //第一次采集的AD 引脚
+  
+  
+  // init_str3 配置了用于更改 ADC引脚 的 DMA3
+  ADC_in_DMA_mode_Init_StrType init_str3;  
+  init_str3.CHn = DMA_CH3;
+  init_str3.SADDR = g_ADC1_mux;
+  init_str3.DADDR = (void *)&ADC1_SC1A;
+  init_str3.byten = DMA_BYTE1;
+  init_str3.soff = sizeof(uint8_t);
+  init_str3.doff = 0x0;
+  init_str3.count = 2;
+  init_str3.slast = -2 * sizeof(uint8_t);
+  init_str3.dlast = 0x0;
+  init_str3.DMA_source = DMA_Always_EN4;
+  
+  init_str3.adc_n = ADC0;
+  init_str3.adc_ch = ADC0_SE8;
+
+    
+  DMA_set_channel_link(DMA_CH0, DMA_CH1, DMA_minor_link);
+  DMA_set_channel_link(DMA_CH0, DMA_CH1, DMA_major_link);  
+  
+  DMA_set_channel_link(DMA_CH2, DMA_CH3, DMA_minor_link);
+  DMA_set_channel_link(DMA_CH2, DMA_CH3, DMA_major_link);  
+  
+  //传入句柄
+  ADC_in_DMA_mode_Init(&init_str0);
+  ADC_in_DMA_mode_Init(&init_str1);
+  ADC_in_DMA_mode_Init(&init_str2);
+  ADC_in_DMA_mode_Init(&init_str3);
+  
+  
+  LPTMR_for_ADC_trigger(us);
+  
+  
+}
+
+
+
+
+
+
 
 
 
@@ -32,7 +145,7 @@ static void LPTMR_for_ADC_trigger(uint32_t us);
  * @param       init_str: 初始化结构体
  * @return
  * @example
- * @note        源和目的的数据宽度均固定为 2bytes，主循环次数固定为2048次
+ * @note        源和目的的数据宽度均固定为 2bytes，主循环总次数为2048次，但由于开启通道间链接，count最大只能511，因此需要分成四次
  *
  */
 void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str)
@@ -50,7 +163,6 @@ void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str)
   
   ADC_Start_for_DMA(init_str->adc_n, init_str->adc_ch, ADC_16bit);
   
-  LPTMR_for_ADC_trigger(init_str->us);
   
 }
 
@@ -63,7 +175,7 @@ void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str)
  * @return
  * @example
  * @note        LPTMR0_CMR = xus * 50 /32       xus最大为41942us
- *              按道理 CSR[TIE] 和 CSR[TCF] 都置位应产生中断，但实际却进不去中断函数。
+ *              按道理 CSR[TIE] 和 CSR[TCF] 都置位应产生中断，但实际却进不去中断函数。原因是中断向量表处没有使能
  * @date        2020/7/19
  *
  */
@@ -208,7 +320,7 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
 
     /* 开启中断 */
     DMA_EN(CHn);                                    //使能通道CHn 硬件请求
-    DMA_IRQ_EN(CHn);                                //允许DMA通道传输
+    //DMA_IRQ_EN(CHn);                                //允许DMA通道传输
 }
 
 
