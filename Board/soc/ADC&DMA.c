@@ -27,7 +27,8 @@ uint8_t g_ADC1_mux[2] = {ADC1_SE6a, ADC1_SE7a};
  * @brief 内部使用函数声明
  */
 static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn byten, int16_t soff, int16_t doff, uint16_t count, int32_t slast, int32_t dlast, DMA_sources DMA_source);
-static void ADC_Start_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit);
+static void ADC_conf_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit);
+static void ADC_chan_select_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch);
 static void LPTMR_for_ADC_trigger(uint32_t us);
 static void DMA_set_channel_link(DMA_CHn to_link_CH, DMA_CHn be_linked_CH, link_type_EnumType link_type);
 
@@ -54,7 +55,7 @@ void ADC_in_DMA_mode_instance_conf(uint32_t us)
   init_str0.doff = sizeof(uint32_t);
   init_str0.count = COUNT_MAX;
   init_str0.slast = 0; 
-  init_str0.dlast = -COUNT_MAX;         //此处由0 改为 -COUNT_MAX
+  init_str0.dlast = -COUNT_MAX * (int)sizeof(uint32_t);         //此处由0 改为 -COUNT_MAX * (int)sizeof(uint32_t)
   init_str0.DMA_source = DMA_ADC0;
   
   init_str0.adc_n = ADC0;
@@ -70,7 +71,7 @@ void ADC_in_DMA_mode_instance_conf(uint32_t us)
   init_str1.soff = sizeof(uint8_t);
   init_str1.doff = 0x0;
   init_str1.count = 2;
-  init_str1.slast = -2 * sizeof(uint8_t);
+  init_str1.slast = -2 /** (int)sizeof(uint8_t)*/;
   init_str1.dlast = 0x0;
   init_str1.DMA_source = DMA_Always_EN3;
   
@@ -88,7 +89,7 @@ void ADC_in_DMA_mode_instance_conf(uint32_t us)
   init_str2.doff = sizeof(uint32_t);
   init_str2.count = COUNT_MAX;
   init_str2.slast = 0x0;
-  init_str2.dlast = -COUNT_MAX;
+  init_str2.dlast = -COUNT_MAX * (int)sizeof(uint32_t);
   init_str2.DMA_source = DMA_ADC1;
   
   init_str2.adc_n = ADC1;
@@ -108,21 +109,35 @@ void ADC_in_DMA_mode_instance_conf(uint32_t us)
   init_str3.dlast = 0x0;
   init_str3.DMA_source = DMA_Always_EN4;
   
-  init_str3.adc_n = ADC0;
-  init_str3.adc_ch = ADC0_SE8;
+  init_str2.adc_n = ADC1;
+  init_str2.adc_ch = ADC1_SE6a; //第一次采集的AD 引脚
 
-    
-  DMA_set_channel_link(DMA_CH0, DMA_CH1, DMA_minor_link);
-  DMA_set_channel_link(DMA_CH0, DMA_CH1, DMA_major_link);  
+
   
-  DMA_set_channel_link(DMA_CH2, DMA_CH3, DMA_minor_link);
-  DMA_set_channel_link(DMA_CH2, DMA_CH3, DMA_major_link);  
-  
-  //传入句柄
+  // 传入句柄
   ADC_in_DMA_mode_Init(&init_str0);
   ADC_in_DMA_mode_Init(&init_str1);
   ADC_in_DMA_mode_Init(&init_str2);
   ADC_in_DMA_mode_Init(&init_str3);
+  
+  // 设置DMA 通道间链接
+  DMA_set_channel_link(DMA_CH0, DMA_CH1, DMA_minor_link);
+  DMA_set_channel_link(DMA_CH0, DMA_CH1, DMA_major_link);    
+  DMA_set_channel_link(DMA_CH2, DMA_CH3, DMA_minor_link);
+  DMA_set_channel_link(DMA_CH2, DMA_CH3, DMA_major_link);  
+  
+  // 硬件请求使能 和 中断使能
+  DMA_IRQ_EN(DMA_CH0);                                //允许DMA通道传输
+  DMA_EN(DMA_CH0);                                    //使能通道CHn 硬件请求  
+  //DMA_IRQ_EN(DMA_CH1);                                //允许DMA通道传输
+  //DMA_EN(DMA_CH1);                                    //使能通道CHn 硬件请求
+  DMA_IRQ_EN(DMA_CH2);                                //允许DMA通道传输
+  DMA_EN(DMA_CH2);                                    //使能通道CHn 硬件请求  
+  //DMA_IRQ_EN(DMA_CH3);                                //允许DMA通道传输
+  //DMA_EN(DMA_CH3);                                    //使能通道CHn 硬件请求
+  
+  //**ADC_chan_select_for_DMA(ADC0, ADC0_SE8);
+  //**ADC_chan_select_for_DMA(ADC1, ADC1_SE6a);
   
   
   LPTMR_for_ADC_trigger(us);
@@ -161,7 +176,7 @@ void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str)
                    init_str->dlast,             //主循环结束后目的地址偏移
                    init_str->DMA_source);       //选择DMA触发源
   
-  ADC_Start_for_DMA(init_str->adc_n, init_str->adc_ch, ADC_16bit);
+  ADC_conf_for_DMA(init_str->adc_n, init_str->adc_ch, ADC_16bit);
   
   
 }
@@ -292,8 +307,8 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
     //**DMA_CITER_ELINKNO(CHn)  = DMA_CITER_ELINKNO_CITER(count); //当前主循环次数 
     //**DMA_BITER_ELINKNO(CHn)  = DMA_BITER_ELINKNO_BITER(count); //起始主循环次数
     
-    DMA_CITER_ELINKYES(CHn)  |= DMA_CITER_ELINKYES_CITER(count); //当前主循环次数 
-    DMA_BITER_ELINKYES(CHn)  |= DMA_BITER_ELINKYES_BITER(count); //起始主循环次数
+    DMA_CITER_ELINKYES(CHn) = 0 | DMA_CITER_ELINKYES_CITER(count); //当前主循环次数 
+    DMA_BITER_ELINKYES(CHn)  = 0 | DMA_BITER_ELINKYES_BITER(count); //起始主循环次数
 
     DMA_CR &= ~DMA_CR_EMLM_MASK;                            // CR[EMLM] = 0
 
@@ -319,7 +334,7 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
 
 
     /* 开启中断 */
-    DMA_EN(CHn);                                    //使能通道CHn 硬件请求
+    //DMA_EN(CHn);                                    //使能通道CHn 硬件请求
     //DMA_IRQ_EN(CHn);                                //允许DMA通道传输
 }
 
@@ -331,24 +346,30 @@ static void DMA_Init_for_ADC(DMA_CHn CHn, void *SADDR, void *DADDR, DMA_BYTEn by
  *               link_type：链接类次：主循环结尾链接 或 主循环结尾链接
  * @return
  * @example
- * @note
+ * @note        CITER 和 BITER 应有相同的配置，之前只配置了 CITER,从而寄存器写入错误
  * @date        2020/7/20
  *
  */
 static void DMA_set_channel_link(DMA_CHn to_link_CH, DMA_CHn be_linked_CH, link_type_EnumType link_type)
 {
   switch (link_type) {
-     case DMA_minor_link: DMA_CITER_ELINKYES(to_link_CH) = (DMA_CITER_ELINKYES(to_link_CH)               //次循环结尾链接
-                                                          | DMA_CITER_ELINKYES_ELINK(1)             //使能次循环结束的通道间链接
-                                                          | DMA_CITER_ELINKYES_LINKCH(be_linked_CH)     //选择被链接的通道
-                                                      );
-                         break;
+    //次循环结尾链接
+    case DMA_minor_link: 
+      DMA_CITER_ELINKYES(to_link_CH) |= DMA_CITER_ELINKYES_ELINK(1);             //使能次循环结束的通道间链接
+      DMA_BITER_ELINKYES(to_link_CH) |= DMA_BITER_ELINKYES_ELINK(1);
+      
+      DMA_CITER_ELINKYES(to_link_CH) &= (~(uint16_t)DMA_CITER_ELINKYES_LINKCH_MASK);    //得先清除这个位域
+      DMA_CITER_ELINKYES(to_link_CH) |= DMA_CITER_ELINKYES_LINKCH(be_linked_CH);     //选择被链接的通道
+      DMA_BITER_ELINKYES(to_link_CH) &= (~(uint16_t)DMA_BITER_ELINKYES_LINKCH_MASK);    //同上
+      DMA_BITER_ELINKYES(to_link_CH) |= DMA_BITER_ELINKYES_LINKCH(be_linked_CH);
+      break;
     
-    case DMA_major_link: DMA_CSR(to_link_CH) = (DMA_CSR(to_link_CH)               //主循环结束链接
-                                              | DMA_CSR_MAJORELINK(1)         //使能主循环结尾的通道间链接
-                                              | DMA_CSR_MAJORLINKCH(be_linked_CH)      //选择被链接的通道
-                                               );
-                        break;
+   //主循环结束链接
+    case DMA_major_link:
+      DMA_CSR(to_link_CH) |= DMA_CSR_MAJORELINK(1);         //使能主循环结尾的通道间链接
+      DMA_CSR(to_link_CH) &= (~(uint16_t)DMA_CSR_MAJORLINKCH(be_linked_CH));
+      DMA_CSR(to_link_CH) |= DMA_CSR_MAJORLINKCH(be_linked_CH);      //选择被链接的通道
+      break;
       
   }
   
@@ -357,17 +378,17 @@ static void DMA_set_channel_link(DMA_CHn to_link_CH, DMA_CHn be_linked_CH, link_
 
 
 /**
- * @brief       ADC初始化，由 LPTMR 触发采集，转换完成触发DMA传输
+ * @brief       ADC初始化配置，由 LPTMR 触发采集，转换完成触发DMA传输
  * @param       adc_n ：  模块名ADC0或ADC1 
  *               adc_ch：  ADC通道编号 
  *                bit   ：  精度选择ADC_8bit，ADC_12bit，ADC_10bit，ADC_16bit
  * @return
  * @example
- * @note        时钟初始化也并入其中
+ * @note        时钟初始化也并入其中，且未启动转换
  * @date        20207/19
  *
  */
-static void ADC_Start_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit)
+static void ADC_conf_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit)
 {
   
    ADC_Init(adc_n);
@@ -393,9 +414,8 @@ static void ADC_Start_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit)
 
     //写入 SC1A 启动转换
     ADC0_SC1(0) = (0 | ADC_SC1_AIEN_MASK            // 转换完成中断,0为禁止，1为使能
-                     //| ADC_SC1_ADCH( 0x0c )       
-                     | ADC_SC1_ADCH( adc_ch )       //ADC0 通道选择
-                  );
+                      | ADC_SC1_ADCH( adc_ch )       //ADC0 通道选择
+                   );
    }
    else 
    {
@@ -410,17 +430,43 @@ static void ADC_Start_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch, ADC_nbit bit)
                      | ADC_CFG2_ADLSTS(0)           //长采样时间选择，ADCK为4+n个额外循环，额外循环，0为20，1为12，2为6，3为2
                   );
     
-    ADC0_SC2 = (0 | ADC_SC2_DMAEN_MASK           //开启ADC的DMA 传输功能
+    ADC1_SC2 = (0 | ADC_SC2_DMAEN_MASK           //开启ADC的DMA 传输功能
                 |  ADC_SC2_ADTRG_MASK             //开启硬件触发
                );      
     
     //ADC0_SC3 = 0 | ADC_SC3_ADCO_MASK;           //开启连续转换模式
     
     //写入 SC1A 启动转换
-    ADC1_SC1(0) = (0 | ADC_SC1_AIEN_MASK            // 转换完成中断,0为禁止，1为使能
-                     //| ADC_SC1_ADCH( 0x0c )       
-                     | ADC_SC1_ADCH( adc_ch )       //ADC1 通道选择
+    ADC1_SC1(0) = (0 | ADC_SC1_AIEN_MASK            // 转换完成中断,0为禁止，1为使能       
+                      | ADC_SC1_ADCH( adc_ch )       //ADC1 通道选择
                   );
    }
 }
+
+
+/**
+ * @brief       ADC转换通道选择，用于第一次转换
+ * @param       adc_n ：  模块名ADC0或ADC1 
+ *               adc_ch：  ADC通道编号 
+ * @return
+ * @example
+ * @note
+ * @date        2020/7/24
+ *
+ */
+static void ADC_chan_select_for_DMA(ADC_Type * adc_n, ADCn_Ch_e adc_ch)
+{
+  if(adc_n == ADC0) { 
+    //写入 SC1A 选择引脚
+    ADC0_SC1(0) &= (uint16_t)(~((uint16_t)ADC_SC1_ADCH( adc_ch )));       //ADC0 通道清零
+    ADC0_SC1(0) |= ADC_SC1_ADCH( adc_ch );       //ADC0 通道选择
+  }
+  else {
+    //写入 SC1A 选择引脚
+    ADC1_SC1(0) &= (uint16_t)(~((uint16_t)ADC_SC1_ADCH( adc_ch )));       //ADC0 通道清零
+    ADC1_SC1(0) |= ADC_SC1_ADCH( adc_ch );       //ADC1 通道选择
+  }
+}
+
+
 

@@ -22,8 +22,7 @@ int main(void)
     NVIC_SetPriorityGrouping(0x07 - 2);
     
     /* 优先级配置 抢占优先级0  子优先级2   越小优先级越高  抢占优先级可打断别的中断 */
-    NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));
-    
+    NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));    
     NVIC_SetPriority(LPUART0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,1));
     
     LED_Init();
@@ -32,12 +31,13 @@ int main(void)
     
     UART_Init(UART4, 115200);           //用于显示波形
     
+    motor_init();
+    
     ADC_Init(ADC1);                    //ADC1初始化
     ADC_Init(ADC0);
     
-    motor_init();
-    
-    ADC_in_DMA_mode_instance_conf(100);
+    //周期为50us
+    ADC_in_DMA_mode_instance_conf(50);
     
     //LPTMR_for_ADC_trigger(1e6);
     //NVIC_EnableIRQ(LPTMR0_IRQn);        //开启中断向量表处的LPTMR中断
@@ -54,8 +54,7 @@ int main(void)
     float V_sound = 352;
     
     while(1) {
-      
-       ;
+    
       //**sample_get();
       
       //LPTMR_TimeStartms();
