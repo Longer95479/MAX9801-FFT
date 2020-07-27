@@ -37,11 +37,10 @@ int main(void)
     ADC_Init(ADC0);
     
     //周期为50us
-    ADC_in_DMA_mode_instance_conf(50);
+    //ADC_in_DMA_mode_instance_conf(50);
     
-    //LPTMR_for_ADC_trigger(1e6);
-    //NVIC_EnableIRQ(LPTMR0_IRQn);        //开启中断向量表处的LPTMR中断
-    
+    task_rhythm_init(TASK_RHYTHM_T);
+   
     
     //int time;
     
@@ -54,6 +53,8 @@ int main(void)
     float V_sound = 352;
     
     while(1) {
+      
+      task_process();
     
       //**sample_get();
       
