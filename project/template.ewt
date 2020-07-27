@@ -2401,6 +2401,9 @@
         <file>
             <name>$PROJ_DIR$\..\Board\soc\Slide_average_filter.c</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\Board\soc\task_scheduler.c</name>
+        </file>
     </group>
     <group>
         <name>CMSIS</name>

@@ -83,9 +83,7 @@ void PIT0_IRQHandler()
 {
     PIT_Flag_Clear(PIT0);       //清中断标志位
     
-    uint16_t count = TPM1->CNT;
-    TPM1->CNT = 0;
-    printf("rps = %f\n", (float)(count * 50 / 520.0)); 
+    task_rhythm();
     
 }
 /*---------------------------------------------------------------
@@ -256,7 +254,7 @@ void UART4_RX_TX_IRQHandler(void)
  */
 void LPTMR0_IRQHandler(void)
 {
-  static int16_t cnt = 0;
+  //static int16_t cnt = 0;
   
   //**cnt++;
         
