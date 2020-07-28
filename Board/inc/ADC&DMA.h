@@ -63,4 +63,27 @@ void ADC_in_DMA_mode_Init(ADC_in_DMA_mode_Init_StrType *init_str);
  */
 void ADC_in_DMA_mode_instance_conf(uint32_t us);
 
+
+/**
+ * @brief       把数据在内存的存储性质从 uint16_t 转化成 type_complex
+ * @param        sample：要转换数据类型的数组
+ * @return
+ * @example
+ * @note
+ *
+ */
+void data_type_trans(type_complex sample[]);
+
+
+/**
+ * @brief       把采集的数据位置重新分配，用于FFT运算
+ * @param       sample_s：数据全部存放在此数组
+ *              sample_d：相应的数据应该转移到此数组的实部
+ * @return
+ * @example
+ * @note
+ *
+ */
+void data_reprocess(type_complex sample_s[], type_complex sample_d[]);
+
 #endif

@@ -33,13 +33,11 @@ int main(void)
     
     motor_init();
     
+    ADC_Init(ADC0);                    //ADC0初始化
     ADC_Init(ADC1);                    //ADC1初始化
-    ADC_Init(ADC0);
+    ADC_in_DMA_mode_instance_conf(50);  //周期为50us
     
-    //周期为50us
-    //ADC_in_DMA_mode_instance_conf(50);
-    
-    task_rhythm_init(TASK_RHYTHM_T);
+    task_rhythm_init(TASK_RHYTHM_T);    //任务调度器初始化
    
     
     //int time;
@@ -50,7 +48,7 @@ int main(void)
         
     //float V_sound = V_sound_Identification(sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9, ADC1, ADC1); //音速辨识
     
-    float V_sound = 352;
+    //float V_sound = 352;
     
     while(1) {
       

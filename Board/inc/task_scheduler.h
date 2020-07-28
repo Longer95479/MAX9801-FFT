@@ -7,12 +7,39 @@
 #define TASK_RHYTHM_T   20      //20ms 进一次中断作为任务节拍
 
 /**
+ * @brief       子任务控制流程宏定义
+ */
+#define CREAT_SUBTASK                   static subtask_status_t subtask_status = SUBTASK_STATUS0;
+#define SUBTASK_BEGIN                   switch(subtask_status) {
+#define SUBTASK_CASE                    case                    //引用此句时记得添加冒号
+#define SUBTASK_BREAK                   break;
+#define SUBTASK_END                     }
+#define SUBTASK_STATUS_CHANGE_TO         subtask_status =        //在引用此句时末尾记得添加逗号
+
+
+/**
  * @brief       任务状态枚举
  */
 typedef enum {
   TASK_RUN,
   TASK_DELAY
-} task_status;
+} task_status_t;
+
+typedef uint8_t task_commu_t;
+
+/**
+ * @brief       子任务状态枚举
+ */
+typedef enum {
+  SUBTASK_STATUS0,
+  SUBTASK_STATUS1,
+  SUBTASK_STATUS2,
+  SUBTASK_STATUS3,
+  SUBTASK_STATUS4,
+  SUBTASK_STATUS5,
+  SUBTASK_STATUS6,
+  SUBTASK_STATUS7  
+} subtask_status_t;
 
 
 /**
@@ -20,7 +47,7 @@ typedef enum {
  */
 typedef struct task{
   
-  task_status task_status_flag; //任务状态
+  task_status_t task_status_flag; //任务状态
   
   uint32_t task_timer;  //任务计时器，为0时任务执行，单位为 一个时钟节拍
   uint32_t task_timer_init_val;  //任务计时器的初始值

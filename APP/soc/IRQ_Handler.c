@@ -138,8 +138,13 @@ void DMA0_DMA16_IRQHandler(void)
     /* 清除通道传输中断标志位    (这样才能再次进入中断) */
     DMA_IRQ_CLEAN(DMA_CH0);          
     
-    /* 采集完H个数据后进入这个DMA中断，停止DMA传输。行中断中打开DMA传输 */
-    DMA_EN(DMA_CH0);                                      
+    if (DMA_DADDR(DMA_CH0) != (uint32_t)(sample_sx + _N/2))       //如果每通道还没采集满2048个数据
+      DMA_EN(DMA_CH0);          //硬件请求使能，继续采集
+    else {                      //采集满了
+      DMA_DADDR(DMA_CH0) = (uint32_t)sample_sx;         //不使能硬件请求，等数据处理完成后再继续采集
+      x_ready_for_fft = 1;
+      //DMA_EN(DMA_CH0);   //测试，之后删除
+    }
 }
 
 /////////////////////////////////////////////////////////////////
@@ -181,8 +186,13 @@ void DMA2_DMA18_IRQHandler(void)
     /* 清除通道传输中断标志位    (这样才能再次进入中断) */
     DMA_IRQ_CLEAN(DMA_CH2);          
     
-    /* 采集完H个数据后进入这个DMA中断，停止DMA传输。行中断中打开DMA传输 */
-    DMA_EN(DMA_CH2);                                      
+    if (DMA_DADDR(DMA_CH2) != (uint32_t)(sample_sy + _N/2))       //如果每通道还没采集满2048个数据
+      DMA_EN(DMA_CH2);          //硬件请求使能，继续采集
+    else {                      //采集满了
+      DMA_DADDR(DMA_CH2) = (uint32_t)sample_sy;         //不使能硬件请求，等数据处理完成后再继续采集
+      y_ready_for_fft = 1;
+      //DMA_EN(DMA_CH2);   //测试，之后删除
+    }                                
 }
 
 /////////////////////////////////////////////////////////////////

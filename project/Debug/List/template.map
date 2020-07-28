@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V8.32.1.169/W32 for ARM                  27/Jul/2020  11:10:49
+# IAR ELF Linker V8.32.1.169/W32 for ARM                  28/Jul/2020  22:26:15
 # Copyright 2007-2018 IAR Systems AB.
 #
 #    Output file  =  
@@ -8,7 +8,7 @@
 #    Map file     =  
 #        D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\List\template.map
 #    Command line =  
-#        -f C:\Users\37157\AppData\Local\Temp\EWDDE7.tmp
+#        -f C:\Users\37157\AppData\Local\Temp\EW97B9.tmp
 #        (D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\ADC&DMA.o
 #        D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\ANO_DT.o
 #        D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\FFT.o
@@ -86,144 +86,161 @@ No sections matched the following patterns:
   section .flex_ram  in "P4"
 
 
-  Section            Kind         Address    Size  Object
-  -------            ----         -------    ----  ------
-"A0":                                       0x400
-  .intvec            ro code          0x0   0x400  startup_MK66F18.o [1]
-                                  - 0x400   0x400
+  Section            Kind         Address     Size  Object
+  -------            ----         -------     ----  ------
+"A0":                                        0x400
+  .intvec            ro code          0x0    0x400  startup_MK66F18.o [1]
+                                  - 0x400    0x400
 
-"P1":                                        0x10
-  FlashConfig        ro code        0x400    0x10  startup_MK66F18.o [1]
-                                  - 0x410    0x10
+"P1":                                         0x10
+  FlashConfig        ro code        0x400     0x10  startup_MK66F18.o [1]
+                                  - 0x410     0x10
 
-"P2":                                      0x138c
-  .text              ro code        0x410   0x314  MK60_FTM.o [1]
-  .text              ro code        0x724   0x1b8  MK60_UART.o [1]
-  .text              ro code        0x8dc   0x148  MK60_PLL.o [1]
-  .text              ro code        0xa24   0x144  LQ_LED.o [1]
-  .text              ro code        0xb68   0x120  MK60_GPIO.o [1]
-  .text              ro code        0xc88   0x13e  xprintftiny.o [2]
-  .text              ro code        0xdc6    0x3a  zero_init3.o [4]
-  .text              ro code        0xe00    0x36  strlen.o [4]
-  .text              ro code        0xe36     0x2  startup_MK66F18.o [1]
-  .text              ro code        0xe38   0x118  MK60_SYSTICK.o [1]
-  .text              ro code        0xf50   0x114  main.o [1]
-  .text              ro code       0x1064    0x6c  Longer_motor.o [1]
-  .text              ro code       0x10d0    0x4c  MK60_ADC.o [1]
-  .text              ro code       0x111c    0xda  task_scheduler.o [1]
-  .text              ro code       0x11f6     0x2  startup_MK66F18.o [1]
-  .text              ro code       0x11f8    0x6c  MK60_PIT.o [1]
-  .text              ro code       0x1264   0x110  IRQ_Handler.o [1]
-  .text              ro code       0x1374    0x28  printf.o [2]
-  .text              ro code       0x139c    0x30  MK60_WDOG.o [1]
-  .text              ro code       0x13cc    0x2c  copy_init3.o [4]
-  .text              ro code       0x13f8    0x28  startup_MK66F18.o [1]
-  .text              ro code       0x1420    0x28  data_init.o [4]
-  .text              ro code       0x1448    0x22  fpinit_M.o [3]
-  .iar.init_table    const         0x146c    0x24  - Linker created -
-  .text              ro code       0x1490     0x2  startup_MK66F18.o [1]
-  .text              ro code       0x1494    0x1e  cmain.o [4]
-  .text              ro code       0x14b2     0x4  low_level_init.o [2]
-  .text              ro code       0x14b6     0x4  exit.o [2]
-  .text              ro code       0x14ba     0x2  startup_MK66F18.o [1]
-  .text              ro code       0x14bc     0xa  cexit.o [4]
-  .text              ro code       0x14c6     0x2  startup_MK66F18.o [1]
-  .text              ro code       0x14c8    0x14  exit.o [5]
-  .text              ro code       0x14dc    0x1a  start.o [1]
-  .text              ro code       0x14f6    0x16  xprout.o [2]
-  .text              ro code       0x150c     0xc  putchar.o [2]
-  .rodata            const         0x1518    0x14  IRQ_Handler.o [1]
-  .text              ro code       0x152c     0xc  cstartup_M.o [4]
-  .text              ro code       0x1538     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1540     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1548     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1550     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1558     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1560     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1568     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1570     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1578     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1580     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1588     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1590     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1598     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15a0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15a8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15b0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15b8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15c0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15c8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15d0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15d8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15e0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15e8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15f0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x15f8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1600     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1608     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1610     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1618     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1620     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1628     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1630     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1638     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1640     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1648     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1650     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1658     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1660     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1668     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1670     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1678     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1680     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1688     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1690     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x1698     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x16a0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x16a8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x16b0     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x16b8     0x8  startup_MK66F18.o [1]
-  .text              ro code       0x16c0     0x4  startup_MK66F18.o [1]
-  .text              ro code       0x16c4     0x2  startup_MK66F18.o [1]
-  .text              ro code       0x16c6     0x2  startup_MK66F18.o [1]
-  .rodata            const         0x16c8     0x0  zero_init3.o [4]
-  .rodata            const         0x16c8     0x0  copy_init3.o [4]
-  Initializer bytes  const         0x16c8    0xd4  <for P3 s0>
-                                 - 0x179c  0x138c
+"P2":                                       0x1f50
+  .text              ro code        0x410    0x580  ADC&DMA.o [1]
+  .text              ro code        0x990     0x4c  MK60_ADC.o [1]
+  .text              ro code        0x9dc    0x314  MK60_FTM.o [1]
+  .text              ro code        0xcf0    0x246  DblDiv.o [3]
+  .text              ro code        0xf36     0x3a  zero_init3.o [4]
+  .text              ro code        0xf70    0x234  task_scheduler.o [1]
+  .text              ro code       0x11a4    0x144  LQ_LED.o [1]
+  .text              ro code       0x12e8     0x28  printf.o [2]
+  .text              ro code       0x1310     0x6c  MK60_PIT.o [1]
+  .text              ro code       0x137c     0x1a  U32ToDbl.o [3]
+  .text              ro code       0x1396      0x2  startup_MK66F18.o [1]
+  .text              ro code       0x1398    0x1a2  DblMul.o [3]
+  .text              ro code       0x153a      0x2  startup_MK66F18.o [1]
+  .text              ro code       0x153c     0x28  DblToU32.o [3]
+  .text              ro code       0x1564    0x120  MK60_GPIO.o [1]
+  .text              ro code       0x1684    0x13e  xprintftiny.o [2]
+  .text              ro code       0x17c2      0x2  startup_MK66F18.o [1]
+  .text              ro code       0x17c4     0x36  strlen.o [4]
+  .text              ro code       0x17fa      0x2  startup_MK66F18.o [1]
+  .text              ro code       0x17fc    0x1b8  MK60_UART.o [1]
+  .text              ro code       0x19b4    0x158  IRQ_Handler.o [1]
+  .text              ro code       0x1b0c    0x148  MK60_PLL.o [1]
+  .text              ro code       0x1c54    0x118  MK60_SYSTICK.o [1]
+  .text              ro code       0x1d6c    0x110  main.o [1]
+  .text              ro code       0x1e7c     0x6c  Longer_motor.o [1]
+  .text              ro code       0x1ee8     0x30  MK60_WDOG.o [1]
+  .rodata            const         0x1f18     0x2c  task_scheduler.o [1]
+  .text              ro code       0x1f44     0x2c  copy_init3.o [4]
+  .text              ro code       0x1f70     0x28  startup_MK66F18.o [1]
+  .text              ro code       0x1f98     0x28  data_init.o [4]
+  .rodata            const         0x1fc0     0x24  task_scheduler.o [1]
+  .text              ro code       0x1fe4     0x22  fpinit_M.o [3]
+  .iar.init_table    const         0x2008     0x24  - Linker created -
+  .text              ro code       0x202c      0x2  startup_MK66F18.o [1]
+  .text              ro code       0x2030     0x1e  cmain.o [4]
+  .text              ro code       0x204e      0x4  low_level_init.o [2]
+  .text              ro code       0x2052      0x4  exit.o [2]
+  .text              ro code       0x2056      0x2  startup_MK66F18.o [1]
+  .text              ro code       0x2058      0xa  cexit.o [4]
+  .text              ro code       0x2062      0x2  startup_MK66F18.o [1]
+  .text              ro code       0x2064     0x14  exit.o [5]
+  .text              ro code       0x2078     0x1a  start.o [1]
+  .text              ro code       0x2092     0x16  xprout.o [2]
+  .text              ro code       0x20a8      0xc  putchar.o [2]
+  .rodata            const         0x20b4     0x14  IRQ_Handler.o [1]
+  .rodata            const         0x20c8     0x14  task_scheduler.o [1]
+  .rodata            const         0x20dc     0x14  task_scheduler.o [1]
+  .text              ro code       0x20f0      0xc  cstartup_M.o [4]
+  .text              ro code       0x20fc      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2104      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x210c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2114      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x211c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2124      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x212c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2134      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x213c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2144      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x214c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2154      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x215c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2164      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x216c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2174      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x217c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2184      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x218c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2194      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x219c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21a4      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21ac      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21b4      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21bc      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21c4      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21cc      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21d4      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21dc      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21e4      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21ec      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21f4      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x21fc      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2204      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x220c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2214      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x221c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2224      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x222c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2234      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x223c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2244      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x224c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2254      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x225c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2264      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x226c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2274      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x227c      0x8  startup_MK66F18.o [1]
+  .text              ro code       0x2284      0x4  startup_MK66F18.o [1]
+  .rodata            const         0x2288      0x0  zero_init3.o [4]
+  .rodata            const         0x2288      0x0  copy_init3.o [4]
+  Initializer bytes  const         0x2288     0xd8  <for P3 s0>
+                                 - 0x2360   0x1f50
 
-"P3", part 1 of 3:                           0xd4
-  P3 s0                       0x1fff'0000    0xd4  <Init block>
-    .data            inited   0x1fff'0000    0x48  xfiles.o [2]
-    .data            inited   0x1fff'0048    0x3c  task_scheduler.o [1]
-    .data            inited   0x1fff'0084    0x14  MK60_GPIO.o [1]
-    .data            inited   0x1fff'0098    0x14  MK60_GPIO.o [1]
-    .data            inited   0x1fff'00ac    0x14  MK60_SYSTICK.o [1]
-    .data            inited   0x1fff'00c0    0x14  MK60_UART.o [1]
-                            - 0x1fff'00d4    0xd4
+"P3", part 1 of 3:                            0xd8
+  P3 s0                       0x2000'0000     0xd8  <Init block>
+    .data            inited   0x2000'0000     0x48  xfiles.o [2]
+    .data            inited   0x2000'0048     0x3c  task_scheduler.o [1]
+    .data            inited   0x2000'0084     0x14  MK60_GPIO.o [1]
+    .data            inited   0x2000'0098     0x14  MK60_GPIO.o [1]
+    .data            inited   0x2000'00ac     0x14  MK60_SYSTICK.o [1]
+    .data            inited   0x2000'00c0     0x14  MK60_UART.o [1]
+    .data            inited   0x2000'00d4      0x2  ADC&DMA.o [1]
+    .data            inited   0x2000'00d6      0x2  ADC&DMA.o [1]
+                            - 0x2000'00d8     0xd8
 
-"P3", part 2 of 3:                           0x90
-  .bss               zero     0x1fff'00d4    0x50  xfiles.o [2]
-  .bss               zero     0x1fff'0128    0x20  MK60_SYSTICK.o [1]
-  .bss               zero     0x1fff'0148    0x10  MK60_FTM.o [1]
-  .bss               zero     0x1fff'0158     0x8  LQ_LED.o [1]
-  .bss               zero     0x1fff'0160     0x1  MK60_PLL.o [1]
-  .bss               zero     0x1fff'0161     0x1  MK60_PLL.o [1]
-                            - 0x1fff'0162    0x8e
+"P3", part 2 of 3:                         0x20090
+  .bss               zero     0x2000'00d8   0x8000  FFT.o [1]
+  .bss               zero     0x2000'80d8   0x8000  FFT.o [1]
+  .bss               zero     0x2001'00d8   0x8000  FFT.o [1]
+  .bss               zero     0x2001'80d8   0x8000  FFT.o [1]
+  .bss               zero     0x2002'00d8     0x50  xfiles.o [2]
+  .bss               zero     0x2002'0128     0x20  MK60_SYSTICK.o [1]
+  .bss               zero     0x2002'0148     0x10  MK60_FTM.o [1]
+  .bss               zero     0x2002'0158      0x8  LQ_LED.o [1]
+  .bss               zero     0x2002'0160      0x1  ADC&DMA.o [1]
+  .bss               zero     0x2002'0161      0x1  ADC&DMA.o [1]
+  .bss               zero     0x2002'0162      0x1  MK60_PLL.o [1]
+  .bss               zero     0x2002'0163      0x1  MK60_PLL.o [1]
+  .bss               zero     0x2002'0164      0x1  task_scheduler.o [1]
+                            - 0x2002'0165  0x2008d
 
-"P3", part 3 of 3:                         0x1000
-  CSTACK                      0x1fff'0168  0x1000  <Block>
-    CSTACK           uninit   0x1fff'0168  0x1000  <Block tail>
-                            - 0x1fff'1168  0x1000
+"P3", part 3 of 3:                          0x1000
+  CSTACK                      0x2002'0168   0x1000  <Block>
+    CSTACK           uninit   0x2002'0168   0x1000  <Block tail>
+                            - 0x2002'1168   0x1000
 
 Unused ranges:
 
          From           To      Size
          ----           --      ----
-       0x179c     0xf'ffff  0xf'e864
+       0x2360     0xf'ffff  0xf'dca0
   0x1000'0000  0x1003'ffff  0x4'0000
-  0x1fff'0164  0x1fff'0167       0x4
-  0x1fff'1168  0x1fff'ffff    0xee98
-  0x2000'0000  0x2002'ffff  0x3'0000
+  0x1fff'0000  0x1fff'ffff  0x1'0000
+  0x2002'1168  0x2002'ffff    0xee98
 
 
 *******************************************************************************
@@ -233,14 +250,14 @@ Unused ranges:
           Address      Size
           -------      ----
 Zero (__iar_zero_init3)
-    1 destination range, total size 0x8e:
-          0x1fff'00d4  0x8e
+    1 destination range, total size 0x2008d:
+          0x2000'00d8  0x2008d
 
 Copy (__iar_copy_init3)
-    1 source range, total size 0xd4:
-               0x16c8  0xd4
-    1 destination range, total size 0xd4:
-          0x1fff'0000  0xd4
+    1 source range, total size 0xd8:
+               0x2288     0xd8
+    1 destination range, total size 0xd8:
+          0x2000'0000     0xd8
 
 
 
@@ -255,7 +272,9 @@ command line/config:
     Total:
 
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj: [1]
-    IRQ_Handler.o          272       20
+    ADC&DMA.o            1 408        4        6
+    FFT.o                                131 072
+    IRQ_Handler.o          344       20
     LQ_LED.o               324                 8
     Longer_motor.o         108
     MK60_ADC.o              76
@@ -266,12 +285,12 @@ D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj: [1]
     MK60_SYSTICK.o         280       20       52
     MK60_UART.o            440       20       20
     MK60_WDOG.o             48
-    main.o                 276
+    main.o                 272
     start.o                 26
     startup_MK66F18.o    1 490
-    task_scheduler.o       218       60       60
+    task_scheduler.o       564      180       61
     --------------------------------------------
-    Total:               5 070      160      198
+    Total:               6 892      284  131 277
 
 dl7M_tlf.a: [2]
     exit.o                   4
@@ -285,9 +304,13 @@ dl7M_tlf.a: [2]
     Total:                 400       72      152
 
 m7M_tls.a: [3]
+    DblDiv.o               582
+    DblMul.o               418
+    DblToU32.o              40
+    U32ToDbl.o              26
     fpinit_M.o              34
     --------------------------------------------
-    Total:                  34
+    Total:               1 100
 
 rt7M_tl.a: [4]
     cexit.o                 10
@@ -305,117 +328,143 @@ shb_l.a: [5]
     --------------------------------------------
     Total:                  20
 
-    Gaps                     2        2        4
+    Gaps                     2        2
     Linker created                   36    4 096
 ------------------------------------------------
-    Grand Total:         5 774      270    4 450
+    Grand Total:         8 662      394  135 525
 
 
 *******************************************************************************
 *** ENTRY LIST
 ***
 
-Entry                       Address   Size  Type      Object
------                       -------   ----  ----      ------
-.iar.init_table$$Base        0x146c          --   Gb  - Linker created -
-.iar.init_table$$Limit       0x1490          --   Gb  - Linker created -
-?main                        0x1495         Code  Gb  cmain.o [4]
-ADC0_IRQHandler              0x1369    0xa  Code  Gb  IRQ_Handler.o [1]
-ADC1_IRQHandler              0x1373    0x2  Code  Gb  IRQ_Handler.o [1]
-ADC_Init                     0x10d1   0x3a  Code  Gb  MK60_ADC.o [1]
-CSTACK$$Base            0x1fff'0168          --   Gb  - Linker created -
-CSTACK$$Limit           0x1fff'1168          --   Gb  - Linker created -
-DMA0_DMA16_IRQHandler        0x12b3   0x16  Code  Gb  IRQ_Handler.o [1]
-DMA1_DMA17_IRQHandler        0x12c9    0xc  Code  Gb  IRQ_Handler.o [1]
-DMA2_DMA18_IRQHandler        0x12d5   0x16  Code  Gb  IRQ_Handler.o [1]
-DMA3_DMA19_IRQHandler        0x12eb    0xc  Code  Gb  IRQ_Handler.o [1]
-DMA4_IRQHandler              0x12f7   0x16  Code  Gb  IRQ_Handler.o [1]
-FTM_GetNum                    0x4d3   0x2c  Code  Gb  MK60_FTM.o [1]
-FTM_PinInit                   0x4ff  0x1ae  Code  Lc  MK60_FTM.o [1]
-FTM_PwmInit                   0x411   0xc2  Code  Gb  MK60_FTM.o [1]
-GPIOX                   0x1fff'0084   0x14  Data  Gb  MK60_GPIO.o [1]
-GPIO_PinInit                  0xb69  0x114  Code  Gb  MK60_GPIO.o [1]
-LED_Init                      0xa25   0x40  Code  Gb  LQ_LED.o [1]
-LED_OFF                       0xac9   0x64  Code  Gb  LQ_LED.o [1]
-LED_ON                        0xa65   0x64  Code  Gb  LQ_LED.o [1]
-LED_Reverse                   0xb2d   0x36  Code  Gb  LQ_LED.o [1]
-LED_Reverse::led_state  0x1fff'0158    0x8  Data  Lc  LQ_LED.o [1]
-LPTMR0_IRQHandler            0x1329   0x14  Code  Gb  IRQ_Handler.o [1]
-NMI_Handler                  0x14f5    0x2  Code  Gb  start.o [1]
-NVIC_EnableIRQ               0x111d   0x14  Code  Lc  task_scheduler.o [1]
-NVIC_EncodePriority           0xf99   0x3c  Code  Lc  main.o [1]
+Entry                       Address    Size  Type      Object
+-----                       -------    ----  ----      ------
+.iar.init_table$$Base        0x2008           --   Gb  - Linker created -
+.iar.init_table$$Limit       0x202c           --   Gb  - Linker created -
+?main                        0x2031          Code  Gb  cmain.o [4]
+ADC0_IRQHandler              0x1b01     0xa  Code  Gb  IRQ_Handler.o [1]
+ADC1_IRQHandler              0x1b0b     0x2  Code  Gb  IRQ_Handler.o [1]
+ADC_Init                      0x991    0x3a  Code  Gb  MK60_ADC.o [1]
+ADC_conf_for_DMA              0x8bb    0x6a  Code  Lc  ADC&DMA.o [1]
+ADC_in_DMA_mode_Init          0x617    0x3e  Code  Gb  ADC&DMA.o [1]
+ADC_in_DMA_mode_instance_conf
+                              0x427   0x170  Code  Gb  ADC&DMA.o [1]
+CSTACK$$Base            0x2002'0168           --   Gb  - Linker created -
+CSTACK$$Limit           0x2002'1168           --   Gb  - Linker created -
+DMA0_DMA16_IRQHandler        0x1a03    0x2e  Code  Gb  IRQ_Handler.o [1]
+DMA1_DMA17_IRQHandler        0x1a31     0xc  Code  Gb  IRQ_Handler.o [1]
+DMA2_DMA18_IRQHandler        0x1a3d    0x2e  Code  Gb  IRQ_Handler.o [1]
+DMA3_DMA19_IRQHandler        0x1a6b     0xc  Code  Gb  IRQ_Handler.o [1]
+DMA4_IRQHandler              0x1a77    0x16  Code  Gb  IRQ_Handler.o [1]
+DMA_Init_for_ADC              0x699   0x116  Code  Lc  ADC&DMA.o [1]
+DMA_set_channel_link          0x7af   0x10c  Code  Lc  ADC&DMA.o [1]
+FTM_GetNum                    0xa9f    0x2c  Code  Gb  MK60_FTM.o [1]
+FTM_PinInit                   0xacb   0x1ae  Code  Lc  MK60_FTM.o [1]
+FTM_PwmInit                   0x9dd    0xc2  Code  Gb  MK60_FTM.o [1]
+GPIOX                   0x2000'0084    0x14  Data  Gb  MK60_GPIO.o [1]
+GPIO_PinInit                 0x1565   0x114  Code  Gb  MK60_GPIO.o [1]
+LED_Init                     0x11a5    0x40  Code  Gb  LQ_LED.o [1]
+LED_OFF                      0x1249    0x64  Code  Gb  LQ_LED.o [1]
+LED_ON                       0x11e5    0x64  Code  Gb  LQ_LED.o [1]
+LED_Reverse                  0x12ad    0x36  Code  Gb  LQ_LED.o [1]
+LED_Reverse::led_state  0x2002'0158     0x8  Data  Lc  LQ_LED.o [1]
+LPTMR0_IRQHandler            0x1aa9    0x14  Code  Gb  IRQ_Handler.o [1]
+LPTMR_for_ADC_trigger         0x655    0x44  Code  Lc  ADC&DMA.o [1]
+NMI_Handler                  0x2091     0x2  Code  Gb  start.o [1]
+NVIC_EnableIRQ                0x411    0x16  Code  Lc  ADC&DMA.o [1]
+NVIC_EnableIRQ                0xf71    0x14  Code  Lc  task_scheduler.o [1]
+NVIC_EncodePriority          0x1db5    0x3c  Code  Lc  main.o [1]
 NVIC_GetPriorityGrouping
-                              0xf6b    0xa  Code  Lc  main.o [1]
-NVIC_SetPriority              0xf75   0x24  Code  Lc  main.o [1]
-NVIC_SetPriority              0xe39   0x24  Code  Lc  MK60_SYSTICK.o [1]
+                             0x1d87     0xa  Code  Lc  main.o [1]
+NVIC_SetPriority             0x1d91    0x24  Code  Lc  main.o [1]
+NVIC_SetPriority             0x1c55    0x24  Code  Lc  MK60_SYSTICK.o [1]
 NVIC_SetPriorityGrouping
-                              0xf51   0x1a  Code  Lc  main.o [1]
-PIT0_IRQHandler              0x127d   0x12  Code  Gb  IRQ_Handler.o [1]
-PIT1_IRQHandler              0x128f    0xc  Code  Gb  IRQ_Handler.o [1]
-PIT2_IRQHandler              0x129b    0xc  Code  Gb  IRQ_Handler.o [1]
-PIT3_IRQHandler              0x12a7    0xc  Code  Gb  IRQ_Handler.o [1]
-PIT_Init                     0x11f9   0x5a  Code  Gb  MK60_PIT.o [1]
-PLL_Init                      0x8dd  0x148  Code  Gb  MK60_PLL.o [1]
-PORTA_IRQHandler             0x1265    0x2  Code  Gb  IRQ_Handler.o [1]
-PORTB_IRQHandler             0x1267   0x16  Code  Gb  IRQ_Handler.o [1]
-PORTX                   0x1fff'0098   0x14  Data  Gb  MK60_GPIO.o [1]
-Region$$Table$$Base          0x146c          --   Gb  - Linker created -
-Region$$Table$$Limit         0x1490          --   Gb  - Linker created -
-Start                        0x14dd   0x12  Code  Gb  start.o [1]
-SysTick_Config                0xe5d   0x30  Code  Lc  MK60_SYSTICK.o [1]
-SysTick_Handler               0xeb5    0xc  Code  Gb  MK60_SYSTICK.o [1]
-UART4_RX_TX_IRQHandler       0x130d   0x1c  Code  Gb  IRQ_Handler.o [1]
-UARTN                   0x1fff'00c0   0x14  Data  Gb  MK60_UART.o [1]
-UART_GetChar                  0x847    0xa  Code  Gb  MK60_UART.o [1]
-UART_GetNum                   0x851   0x36  Code  Gb  MK60_UART.o [1]
-UART_Init                     0x735  0x112  Code  Gb  MK60_UART.o [1]
-WDOG_Disable                 0x139d   0x14  Code  Gb  MK60_WDOG.o [1]
-WDOG_Unlock                  0x13b1   0x14  Code  Gb  MK60_WDOG.o [1]
-_PrintfTiny                   0xca1  0x126  Code  Gb  xprintftiny.o [2]
-_Prout                       0x14f7   0x16  Code  Gb  xprout.o [2]
-__Vectors                       0x0          --   Gb  startup_MK66F18.o [1]
-__Vectors_End                 0x400         Data  Gb  startup_MK66F18.o [1]
-__Vectors_Size {Abs}          0x400          --   Gb  startup_MK66F18.o [1]
-__cmain                      0x1495         Code  Gb  cmain.o [4]
-__exit                       0x14c9   0x14  Code  Gb  exit.o [5]
-__iar_Stdout            0x1fff'0000   0x48  Data  Gb  xfiles.o [2]
-__iar_copy_init3             0x13cd   0x2c  Code  Gb  copy_init3.o [4]
-__iar_data_init3             0x1421   0x28  Code  Gb  data_init.o [4]
-__iar_init_vfp               0x1449         Code  Gb  fpinit_M.o [3]
-__iar_program_start          0x152d         Code  Gb  cstartup_M.o [4]
-__iar_zero_init3              0xdc7   0x3a  Code  Gb  zero_init3.o [4]
-__low_level_init             0x14b3    0x4  Code  Gb  low_level_init.o [2]
-__vector_table                  0x0         Data  Gb  startup_MK66F18.o [1]
-__vector_table_0x1c            0x1c         Data  Gb  startup_MK66F18.o [1]
-_call_main                   0x14a1         Code  Gb  cmain.o [4]
-_exit                        0x14bd         Code  Gb  cexit.o [4]
-_main                        0x14af         Code  Gb  cmain.o [4]
-bus_clk                 0x1fff'0161    0x1  Data  Gb  MK60_PLL.o [1]
-core_clk                0x1fff'0160    0x1  Data  Gb  MK60_PLL.o [1]
-delay_ms                      0xf1f   0x12  Code  Lc  MK60_SYSTICK.o [1]
-delay_us                      0xef7   0x28  Code  Lc  MK60_SYSTICK.o [1]
-exit                         0x14b7    0x4  Code  Gb  exit.o [2]
-fputc                         0x725   0x10  Code  Gb  MK60_UART.o [1]
-ftm_period              0x1fff'0148   0x10  Data  Lc  MK60_FTM.o [1]
-get_current_time_ms           0xec1   0x12  Code  Lc  MK60_SYSTICK.o [1]
-get_current_time_us           0xed3   0x24  Code  Lc  MK60_SYSTICK.o [1]
-main                          0xfd5   0x6a  Code  Gb  main.o [1]
-motor_init                   0x1065   0x68  Code  Gb  Longer_motor.o [1]
-obuf                    0x1fff'00d4   0x50  Data  Lc  xfiles.o [2]
-out                           0xc89   0x18  Code  Lc  xprintftiny.o [2]
-printf                       0x1375   0x28  Code  Gb  printf.o [2]
-putchar                      0x150d    0xc  Code  Gb  putchar.o [2]
-strlen                        0xe01         Code  Gb  strlen.o [4]
-systime                 0x1fff'00ac   0x14  Data  Gb  MK60_SYSTICK.o [1]
-systime_init                  0xe8d   0x28  Code  Lc  MK60_SYSTICK.o [1]
-task0_entry                  0x1131    0xa  Code  Gb  task_scheduler.o [1]
-task1_entry                  0x113b    0xa  Code  Gb  task_scheduler.o [1]
-task2_entry                  0x1145    0xa  Code  Gb  task_scheduler.o [1]
-task_process                 0x11a5   0x36  Code  Gb  task_scheduler.o [1]
-task_rhythm                  0x114f   0x56  Code  Gb  task_scheduler.o [1]
-task_rhythm_init             0x11e5   0x12  Code  Gb  task_scheduler.o [1]
-tasks                   0x1fff'0048   0x3c  Data  Lc  task_scheduler.o [1]
-timer                   0x1fff'0128   0x20  Data  Gb  MK60_SYSTICK.o [1]
+                             0x1d6d    0x1a  Code  Lc  main.o [1]
+PIT0_IRQHandler              0x19cd    0x12  Code  Gb  IRQ_Handler.o [1]
+PIT1_IRQHandler              0x19df     0xc  Code  Gb  IRQ_Handler.o [1]
+PIT1_get_time                0x10f5    0x56  Code  Lc  task_scheduler.o [1]
+PIT1_start_count             0x10cd    0x28  Code  Lc  task_scheduler.o [1]
+PIT2_IRQHandler              0x19eb     0xc  Code  Gb  IRQ_Handler.o [1]
+PIT3_IRQHandler              0x19f7     0xc  Code  Gb  IRQ_Handler.o [1]
+PIT_Init                     0x1311    0x5a  Code  Gb  MK60_PIT.o [1]
+PLL_Init                     0x1b0d   0x148  Code  Gb  MK60_PLL.o [1]
+PORTA_IRQHandler             0x19b5     0x2  Code  Gb  IRQ_Handler.o [1]
+PORTB_IRQHandler             0x19b7    0x16  Code  Gb  IRQ_Handler.o [1]
+PORTX                   0x2000'0098    0x14  Data  Gb  MK60_GPIO.o [1]
+Region$$Table$$Base          0x2008           --   Gb  - Linker created -
+Region$$Table$$Limit         0x202c           --   Gb  - Linker created -
+Start                        0x2079    0x12  Code  Gb  start.o [1]
+SysTick_Config               0x1c79    0x30  Code  Lc  MK60_SYSTICK.o [1]
+SysTick_Handler              0x1cd1     0xc  Code  Gb  MK60_SYSTICK.o [1]
+UART4_RX_TX_IRQHandler       0x1a8d    0x1c  Code  Gb  IRQ_Handler.o [1]
+UARTN                   0x2000'00c0    0x14  Data  Gb  MK60_UART.o [1]
+UART_GetChar                 0x191f     0xa  Code  Gb  MK60_UART.o [1]
+UART_GetNum                  0x1929    0x36  Code  Gb  MK60_UART.o [1]
+UART_Init                    0x180d   0x112  Code  Gb  MK60_UART.o [1]
+WDOG_Disable                 0x1ee9    0x14  Code  Gb  MK60_WDOG.o [1]
+WDOG_Unlock                  0x1efd    0x14  Code  Gb  MK60_WDOG.o [1]
+_PrintfTiny                  0x169d   0x126  Code  Gb  xprintftiny.o [2]
+_Prout                       0x2093    0x16  Code  Gb  xprout.o [2]
+__Vectors                       0x0           --   Gb  startup_MK66F18.o [1]
+__Vectors_End                 0x400          Data  Gb  startup_MK66F18.o [1]
+__Vectors_Size {Abs}          0x400           --   Gb  startup_MK66F18.o [1]
+__aeabi_d2uiz                0x153d          Code  Gb  DblToU32.o [3]
+__aeabi_ddiv                  0xcf1          Code  Gb  DblDiv.o [3]
+__aeabi_dmul                 0x1399          Code  Gb  DblMul.o [3]
+__aeabi_ui2d                 0x137d          Code  Gb  U32ToDbl.o [3]
+__cmain                      0x2031          Code  Gb  cmain.o [4]
+__exit                       0x2065    0x14  Code  Gb  exit.o [5]
+__iar_Stdout            0x2000'0000    0x48  Data  Gb  xfiles.o [2]
+__iar_copy_init3             0x1f45    0x2c  Code  Gb  copy_init3.o [4]
+__iar_data_init3             0x1f99    0x28  Code  Gb  data_init.o [4]
+__iar_init_vfp               0x1fe5          Code  Gb  fpinit_M.o [3]
+__iar_program_start          0x20f1          Code  Gb  cstartup_M.o [4]
+__iar_zero_init3              0xf37    0x3a  Code  Gb  zero_init3.o [4]
+__low_level_init             0x204f     0x4  Code  Gb  low_level_init.o [2]
+__vector_table                  0x0          Data  Gb  startup_MK66F18.o [1]
+__vector_table_0x1c            0x1c          Data  Gb  startup_MK66F18.o [1]
+_call_main                   0x203d          Code  Gb  cmain.o [4]
+_exit                        0x2059          Code  Gb  cexit.o [4]
+_main                        0x204b          Code  Gb  cmain.o [4]
+bus_clk                 0x2002'0163     0x1  Data  Gb  MK60_PLL.o [1]
+core_clk                0x2002'0162     0x1  Data  Gb  MK60_PLL.o [1]
+data_reprocess                0x5cf    0x48  Code  Gb  ADC&DMA.o [1]
+data_type_trans               0x597    0x38  Code  Gb  ADC&DMA.o [1]
+delay_ms                     0x1d3b    0x12  Code  Lc  MK60_SYSTICK.o [1]
+delay_us                     0x1d13    0x28  Code  Lc  MK60_SYSTICK.o [1]
+exit                         0x2053     0x4  Code  Gb  exit.o [2]
+fputc                        0x17fd    0x10  Code  Gb  MK60_UART.o [1]
+ftm_period              0x2002'0148    0x10  Data  Lc  MK60_FTM.o [1]
+g_ADC0_mux              0x2000'00d4     0x2  Data  Gb  ADC&DMA.o [1]
+g_ADC1_mux              0x2000'00d6     0x2  Data  Gb  ADC&DMA.o [1]
+get_current_time_ms          0x1cdd    0x12  Code  Lc  MK60_SYSTICK.o [1]
+get_current_time_us          0x1cef    0x24  Code  Lc  MK60_SYSTICK.o [1]
+main                         0x1df1    0x6c  Code  Gb  main.o [1]
+motor_init                   0x1e7d    0x68  Code  Gb  Longer_motor.o [1]
+obuf                    0x2002'00d8    0x50  Data  Lc  xfiles.o [2]
+out                          0x1685    0x18  Code  Lc  xprintftiny.o [2]
+printf                       0x12e9    0x28  Code  Gb  printf.o [2]
+putchar                      0x20a9     0xc  Code  Gb  putchar.o [2]
+sample_dx               0x2000'80d8  0x8000  Data  Gb  FFT.o [1]
+sample_dy               0x2001'80d8  0x8000  Data  Gb  FFT.o [1]
+sample_sx               0x2000'00d8  0x8000  Data  Gb  FFT.o [1]
+sample_sy               0x2001'00d8  0x8000  Data  Gb  FFT.o [1]
+strlen                       0x17c5          Code  Gb  strlen.o [4]
+systime                 0x2000'00ac    0x14  Data  Gb  MK60_SYSTICK.o [1]
+systime_init                 0x1ca9    0x28  Code  Lc  MK60_SYSTICK.o [1]
+task0_entry                   0xf85    0x8a  Code  Gb  task_scheduler.o [1]
+task0_entry::subtask_status
+                        0x2002'0164     0x1  Data  Lc  task_scheduler.o [1]
+task1_entry                  0x100f    0x10  Code  Gb  task_scheduler.o [1]
+task2_entry                  0x101f    0x10  Code  Gb  task_scheduler.o [1]
+task_process                 0x1085    0x36  Code  Gb  task_scheduler.o [1]
+task_rhythm                  0x102f    0x56  Code  Gb  task_scheduler.o [1]
+task_rhythm_init             0x10bb    0x12  Code  Gb  task_scheduler.o [1]
+tasks                   0x2000'0048    0x3c  Data  Lc  task_scheduler.o [1]
+timer                   0x2002'0128    0x20  Data  Gb  MK60_SYSTICK.o [1]
+x_ready_for_fft         0x2002'0160     0x1  Data  Gb  ADC&DMA.o [1]
+y_ready_for_fft         0x2002'0161     0x1  Data  Gb  ADC&DMA.o [1]
 
 
 [1] = D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj
@@ -424,9 +473,9 @@ timer                   0x1fff'0128   0x20  Data  Gb  MK60_SYSTICK.o [1]
 [4] = rt7M_tl.a
 [5] = shb_l.a
 
-  5 774 bytes of readonly  code memory
-    270 bytes of readonly  data memory
-  4 450 bytes of readwrite data memory
+    8 662 bytes of readonly  code memory
+      394 bytes of readonly  data memory
+  135 525 bytes of readwrite data memory
 
 Errors: none
 Warnings: none

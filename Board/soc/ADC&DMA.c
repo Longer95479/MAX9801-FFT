@@ -53,9 +53,9 @@ void ADC_in_DMA_mode_instance_conf(uint32_t us)
   init_str0.byten = DMA_BYTE2;
   init_str0.soff = 0x0;
   init_str0.doff = sizeof(uint32_t);
-  init_str0.count = COUNT_MAX;
+  init_str0.count = (COUNT_MAX + 1) / 2;        //256
   init_str0.slast = 0; 
-  init_str0.dlast = -COUNT_MAX * (int)sizeof(uint32_t);         //此处由0 改为 -COUNT_MAX * (int)sizeof(uint32_t)
+  init_str0.dlast = 0;         
   init_str0.DMA_source = DMA_ADC0;
   
   init_str0.adc_n = ADC0;
@@ -87,9 +87,9 @@ void ADC_in_DMA_mode_instance_conf(uint32_t us)
   init_str2.byten = DMA_BYTE2;
   init_str2.soff = 0x0;
   init_str2.doff = sizeof(uint32_t);
-  init_str2.count = COUNT_MAX;
+  init_str2.count = (COUNT_MAX + 1) / 2;
   init_str2.slast = 0x0;
-  init_str2.dlast = -COUNT_MAX * (int)sizeof(uint32_t);
+  init_str2.dlast = 0/*-COUNT_MAX * (int)sizeof(uint32_t)*/;
   init_str2.DMA_source = DMA_ADC1;
   
   init_str2.adc_n = ADC1;
@@ -147,9 +147,46 @@ void ADC_in_DMA_mode_instance_conf(uint32_t us)
 
 
 
+/**
+ * @brief       把数据在内存的存储性质从 uint16_t 转化成 type_complex
+ * @param        sample：要转换数据类型的数组
+ * @return
+ * @example
+ * @note
+ *
+ */
+void data_type_trans(type_complex sample[])
+{
+  for (int i = 0; i < _N/2; i++) {
+    sample[i].re = *((uint16_t *)(&(sample[i].re)));
+    sample[i].im = *((uint16_t *)(&(sample[i].im)));
+  }
+}
 
 
-
+/**
+ * @brief       把采集的数据位置重新分配，用于FFT运算
+ * @param       sample_s：数据全部存放在此数组
+ *              sample_d：相应的数据应该转移到此数组的实部
+ * @return
+ * @example
+ * @note
+ *
+ */
+void data_reprocess(type_complex sample_s[], type_complex sample_d[])
+{
+  
+  for (int i = 0; i < _N/2; i++) {
+    sample_d[i].re = sample_s[i].im;
+    sample_d[i].im = 0;
+    sample_s[i].im = 0;
+  }
+  
+  for (int i = _N/2; i < _N; i++) {
+    sample_s[i].re = 0;
+    sample_d[i].im = 0;
+  }
+}
 
 
 
