@@ -139,14 +139,13 @@ void task2_entry(void *arg)
 CREAT_SUBTASK
 SUBTASK_BEGIN
 
+
 //! 波形标准化，sample_sx 的 FFT
 SUBTASK_CASE SUBTASK_STATUS0:
   PIT1_start_count();
   
   if (t2wft1_can_xfft.flag == 1) {
     t2wft1_can_xfft.flag = 0;
-    
-    DMA_EN(DMA_CH0);    //此时即可开始下一轮的采集
     
     amplitude_and_mean_process(sample_sx);
     amplitude_and_mean_process(sample_dx);
@@ -158,6 +157,7 @@ SUBTASK_CASE SUBTASK_STATUS0:
   
   printf("task2_subtask0 running time: %u.\n", PIT1_get_time());
 SUBTASK_BREAK
+
 
 //! sample_dx 的 FFT，频域滤波
 SUBTASK_CASE SUBTASK_STATUS1:
@@ -171,6 +171,244 @@ SUBTASK_CASE SUBTASK_STATUS1:
   
   printf("task2_subtask1 running time: %u.\n", PIT1_get_time());
 SUBTASK_BREAK
+
+
+//! 广义互相关处理
+SUBTASK_CASE SUBTASK_STATUS2:
+  PIT1_start_count();
+  // 广义互相关
+  for (int i = 0; i < _N; i++) {
+    z_x[i] = complex_mult(sample_sx[i], sample_dx[i]);
+        
+    static float A = 1;
+    A =  100 * InvSqrt(pow(z_x[i].re, 2) + pow(z_x[i].im, 2));
+    z_x[i].re = z_x[i].re * A;
+    z_x[i].im = z_x[i].im * A;
+  }
+  
+  DMA_EN(DMA_CH0);    //此时即可开始下一轮的采集
+  //printf("DMA_ERQ_ERQ0 = %d\n", (int8_t)(DMA_ERQ & (DMA_ERQ_ERQ0_MASK<<(DMA_CH0))));  //仅用于测试
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS3;
+  
+  printf("task2_subtask2 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK  
+
+
+//! z 的 IFFT，查找互相关结果最大值的索引
+SUBTASK_CASE SUBTASK_STATUS3:
+  PIT1_start_count();
+  
+  IFFT(z_x, kWnk_ifft, _N);
+  
+  // max的中位值滤波
+  static int16 max_now, max_queue[9] = {0}; //队列数组，0进
+  max_now = 0;
+  for (int i = 0; i < _N; i++)
+    if (z_x[i].re > z_x[max_now].re)
+      max_now = i;
+  
+  t4wft2_can_xUART.int16_val = midst_filter(max_now, max_queue, 5) - _N/2 + 1;
+  t4wft2_can_xUART.flag = 1;
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+  
+  printf("task2_subtask3 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
+  
+SUBTASK_END  
+}
+
+
+/**
+ * @brief       任务3入口函数，y轴的FFT运算
+ */
+void task3_entry(void *arg)
+{
+CREAT_SUBTASK
+SUBTASK_BEGIN
+
+
+//! 波形标准化，sample_sy 的 FFT
+SUBTASK_CASE SUBTASK_STATUS0:
+  PIT1_start_count();
+  
+  if (t3wft1_can_yfft.flag == 1) {
+    t3wft1_can_yfft.flag = 0;
+    
+    amplitude_and_mean_process(sample_sy);
+    amplitude_and_mean_process(sample_dy);
+    
+    FFT(sample_sy, kWnk_fft, _N); 
+    
+    SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
+  }
+  
+  printf("task3_subtask0 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
+
+//! sample_dy 的 FFT，频域滤波
+SUBTASK_CASE SUBTASK_STATUS1:
+  PIT1_start_count();
+  
+  FFT(sample_dy, kWnk_fft, _N);
+  low_pass_filter(sample_sy);
+  low_pass_filter(sample_dy);
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS2;
+  
+  printf("task3_subtask1 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
+
+//! 广义互相关
+SUBTASK_CASE SUBTASK_STATUS2:
+  PIT1_start_count();
+  
+  // 广义互相关
+  for (int i = 0; i < _N; i++) {
+    z_y[i] = complex_mult(sample_sy[i], sample_dy[i]);
+    
+    static float A = 1;
+    A =  100 * InvSqrt(pow(z_y[i].re, 2) + pow(z_y[i].im, 2));
+    z_y[i].re = z_y[i].re * A;
+    z_y[i].im = z_y[i].im * A;
+  }
+  
+  DMA_EN(DMA_CH2);    //此时即可立刻开始下一轮的采集
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS3;
+  
+  printf("task3_subtask2 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
+
+//! z 的 IFFT，查找互相关结果最大值的索引
+SUBTASK_CASE SUBTASK_STATUS3:
+  PIT1_start_count();
+  
+  IFFT(z_y, kWnk_ifft, _N);
+  
+  // max的中位值滤波
+  static int16 max_now, max_queue[9] = {0}; //队列数组，0进
+  max_now = 0;
+  for (int i = 0; i < _N; i++)
+    if (z_y[i].re > z_y[max_now].re)
+      max_now = i;
+  
+  t4wft3_can_yUART.int16_val = midst_filter(max_now, max_queue, 5) - _N/2 + 1;
+  t4wft3_can_yUART.flag = 1;
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+  
+  printf("task3_subtask3 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
+  
+SUBTASK_END    
+}
+
+
+/**
+ * @brief       任务4入口函数，用于串口发送数据
+ */
+void task4_entry(void *arg)
+{
+CREAT_SUBTASK
+SUBTASK_BEGIN
+
+// 检测用于传输的数据是否生成
+SUBTASK_CASE SUBTASK_STATUS0:
+  PIT1_start_count();
+  
+  if (t4wft2_can_xUART.flag & t4wft3_can_yUART.flag == 1)
+    SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
+
+  printf("task4_subtask0 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
+//传输数据，传输完成后使能 DMA传输
+SUBTASK_CASE SUBTASK_STATUS1:
+  PIT1_start_count();
+  /*
+  static uint8 group = 0;
+  
+  for (int i = group * 32; i < (group + 1) * 32; i++)
+      ANO_DT_send_int16((int16_t)(100 * sample_sx[i].re), (int16_t)(100 * sample_dx[i].re), (int16_t)(100 * sample_sy[i].re), (int16_t)(100 * sample_dy[i].re), 0, 0, 0, 0);
+  
+  group++;
+  
+  if (group == _N/32) {
+    DMA_EN(DMA_CH0); 
+    DMA_EN(DMA_CH2); 
+    
+    group = 0;
+    t4wft2_can_xUART.flag = 0;
+    t4wft3_can_yUART.flag = 0;
+    
+    SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+  }
+  */
+  
+  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, 0, 0, 0, 0, 0, 0);
+  
+  t4wft2_can_xUART.flag = 0;
+  t4wft3_can_yUART.flag = 0;
+  
+  printf("task4_subtask1 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK  
+  
+  
+SUBTASK_END  
+    
+}
+
+
+/**
+ * @brief       任务5入口函数，x轴的FFT运算（显示波形版）
+ */
+void task5_entry(void *arg)
+{
+CREAT_SUBTASK
+SUBTASK_BEGIN
+
+
+//! 波形标准化，sample_sx 的 FFT
+SUBTASK_CASE SUBTASK_STATUS0:
+  PIT1_start_count();
+  
+  if (t2wft1_can_xfft.flag == 1) {
+    t2wft1_can_xfft.flag = 0;
+    
+    //**DMA_EN(DMA_CH0);    //此时即可开始下一轮的采集
+    
+    amplitude_and_mean_process(sample_sx);
+    amplitude_and_mean_process(sample_dx);
+    
+    FFT(sample_sx, kWnk_fft, _N); 
+    
+    SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
+  }
+  
+  printf("task2_subtask0 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
+
+//! sample_dx 的 FFT，频域滤波
+SUBTASK_CASE SUBTASK_STATUS1:
+  PIT1_start_count();
+  
+  FFT(sample_dx, kWnk_fft, _N);
+  low_pass_filter(sample_sx);
+  low_pass_filter(sample_dx);
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS2;
+  
+  printf("task2_subtask1 running time: %u.\n", PIT1_get_time());
+SUBTASK_BREAK
+
 
 //! 广义互相关处理
 SUBTASK_CASE SUBTASK_STATUS2:
@@ -190,10 +428,11 @@ SUBTASK_CASE SUBTASK_STATUS2:
   printf("task2_subtask2 running time: %u.\n", PIT1_get_time());
 SUBTASK_BREAK  
 
+
 //! z 的 IFFT，查找互相关结果最大值的索引
 SUBTASK_CASE SUBTASK_STATUS3:
   PIT1_start_count();
-  
+/*  
   IFFT(z_x, kWnk_ifft, _N);
   
   // max的中位值滤波
@@ -203,23 +442,34 @@ SUBTASK_CASE SUBTASK_STATUS3:
     if (z_x[i].re > z_x[max_now].re)
       max_now = i;
   
-  t4wft2_can_xUART.int16_val = midst_filter(max_now, max_queue, 9) - _N/2 + 1;
+  t4wft2_can_xUART.int16_val = midst_filter(max_now, max_queue, 5) - _N/2 + 1;
   t4wft2_can_xUART.flag = 1;
+*/
+  IFFT(sample_sx, kWnk_ifft, _N);
   
-  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS4;
   
   printf("task2_subtask3 running time: %u.\n", PIT1_get_time());
 SUBTASK_BREAK
+
+
+SUBTASK_CASE SUBTASK_STATUS4:
   
+  IFFT(sample_dx, kWnk_ifft, _N);
+  
+  t4wft2_can_xUART.flag = 1;
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+SUBTASK_BREAK  
   
 SUBTASK_END  
 }
 
 
 /**
- * @brief       任务3入口函数，y轴的FFT运算
+ * @brief       任务6入口函数，y轴的FFT运算（显示波形版）
  */
-void task3_entry(void *arg)
+void task6_entry(void *arg)
 {
 CREAT_SUBTASK
 SUBTASK_BEGIN
@@ -231,7 +481,7 @@ SUBTASK_CASE SUBTASK_STATUS0:
   if (t3wft1_can_yfft.flag == 1) {
     t3wft1_can_yfft.flag = 0;
     
-    DMA_EN(DMA_CH2);    //此时即可立刻开始下一轮的采集
+    //**DMA_EN(DMA_CH2);    //此时即可立刻开始下一轮的采集
     
     amplitude_and_mean_process(sample_sy);
     amplitude_and_mean_process(sample_dy);
@@ -279,7 +529,7 @@ SUBTASK_BREAK
 //! z 的 IFFT，查找互相关结果最大值的索引
 SUBTASK_CASE SUBTASK_STATUS3:
   PIT1_start_count();
-  
+  /*
   IFFT(z_y, kWnk_ifft, _N);
   
   // max的中位值滤波
@@ -291,22 +541,30 @@ SUBTASK_CASE SUBTASK_STATUS3:
   
   t4wft3_can_yUART.int16_val = midst_filter(max_now, max_queue, 9) - _N/2 + 1;
   t4wft3_can_yUART.flag = 1;
-  
-  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+  */
+  IFFT(sample_sy, kWnk_ifft, _N);
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS4;
   
   printf("task3_subtask3 running time: %u.\n", PIT1_get_time());
 SUBTASK_BREAK
 
+SUBTASK_CASE SUBTASK_STATUS4:
   
+  IFFT(sample_dy, kWnk_ifft, _N);
+  
+  t4wft3_can_yUART.flag = 1;
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+SUBTASK_BREAK
   
 SUBTASK_END    
 }
 
 
 /**
- * @brief       任务4入口函数，用于串口发送数据
+ * @brief       任务7入口函数，用于串口发送数据（显示波形版）
  */
-void task4_entry(void *arg)
+void task7_entry(void *arg)
 {
 CREAT_SUBTASK
 SUBTASK_BEGIN
@@ -324,7 +582,7 @@ SUBTASK_BREAK
 //传输数据，传输完成后使能 DMA传输
 SUBTASK_CASE SUBTASK_STATUS1:
   PIT1_start_count();
-  /*
+  
   static uint8 group = 0;
   
   for (int i = group * 32; i < (group + 1) * 32; i++)
@@ -333,8 +591,8 @@ SUBTASK_CASE SUBTASK_STATUS1:
   group++;
   
   if (group == _N/32) {
-    //DMA_EN(DMA_CH0); 
-    //DMA_EN(DMA_CH2); 
+    DMA_EN(DMA_CH0); 
+    DMA_EN(DMA_CH2); 
     
     group = 0;
     t4wft2_can_xUART.flag = 0;
@@ -342,13 +600,13 @@ SUBTASK_CASE SUBTASK_STATUS1:
     
     SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
   }
-  */
   
-  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, 0, 0, 0, 0, 0, 0);
+  
+  /*ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, 0, 0, 0, 0, 0, 0);
   
   t4wft2_can_xUART.flag = 0;
   t4wft3_can_yUART.flag = 0;
-  
+  */
   printf("task4_subtask1 running time: %u.\n", PIT1_get_time());
 SUBTASK_BREAK  
   
@@ -356,6 +614,7 @@ SUBTASK_BREAK
 SUBTASK_END  
     
 }
+
 
 
 /***********************************************************************/
