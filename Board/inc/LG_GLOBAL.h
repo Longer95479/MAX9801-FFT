@@ -14,7 +14,7 @@
 /**
  * @brief       前四个为麦克风数据，最后一个用来存储互相关结果
  */
-FFT_EXT type_complex sample_sx[_N], sample_dx[_N], sample_sy[_N], sample_dy[_N], z[_N];
+FFT_EXT type_complex sample_sx[_N], sample_dx[_N], sample_sy[_N], sample_dy[_N], z_x[_N], z_y[_N];
 
 
 /**

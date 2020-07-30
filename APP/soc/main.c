@@ -25,6 +25,10 @@ int main(void)
     NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));    
     NVIC_SetPriority(LPUART0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,1));
     
+    NVIC_SetPriority(PIT0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,0));
+    NVIC_SetPriority(DMA0_DMA16_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,1));
+    NVIC_SetPriority(DMA2_DMA18_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,2));
+    
     LED_Init();
     
     systime.init(); 

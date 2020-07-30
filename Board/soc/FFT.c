@@ -79,6 +79,26 @@ type_complex complex_mult(type_complex cx1, type_complex cx2)
 }
 
 
+
+/**
+ * @brief       神奇的开方运算，比库开方快4倍
+ * @param       x：被开方数
+ * @return      1/x^0.5
+ * @example
+ * @note
+ *
+ */
+float InvSqrt(float x)
+{
+    float xhalf = 0.5f*x;
+    int i = *(int*)&x; // get bits for floating VALUE 
+    i = 0x5f375a86- (i>>1); // gives initial guess y0
+    x = *(float*)&i; // convert bits BACK to float
+    x = x*(1.5f-xhalf*x*x); // Newton step, repeating increases accuracy
+    return x;
+}  
+
+
 /**
  * @brief       把一个数与其二进制逆序的数交换位置，对输入数组的所有元素进行此操作。位码倒读
  * @param       需要重新排序的数组 x[], 数组长度 N
@@ -107,70 +127,7 @@ static void inver(type_complex x[],int N)
 	}
 }
         
-#ifdef GOBAL
 
-/**
- * @brief       生成旋转因此，用于 FFT 运算
- * @param        model: 用于确定生成 FFT 的旋转因子还是 IFFT的旋转因子
- *                Wnk: 指向生成的旋转因子的地址
- *                N: 数组长度
- * @return
- * @example
- * @note        本打算用于将生成的旋转因子存在 Flash, 但现已经弃用，且其可用性还未确定。可删除
- *
- */
-//const type_complex Wnk_fft_G[_N], Wnk_ifft_G[_N];
-void init_Wnk(uint8 model, type_complex *Wnk, int N)
-{
-    if (model) {
-      Wnk = (type_complex *)0x410;//Wnk_fft_G;
-      for(int i=0;i < N;i++) {  
-          Wnk[i].re = cos(2*PI/N*i);   //用欧拉公式计算fft旋转因子  
-          Wnk[i].im = -1*sin(2*PI/N*i);  
-      }
-    }
-    else {
-      Wnk = (type_complex *)0x10410;//Wnk_ifft_G;
-      for(int i=0;i < N;i++) {  
-          Wnk[i].re = cos(2*PI/N*i);   //用欧拉公式计算ifft旋转因子  
-          Wnk[i].im = sin(2*PI/N*i);  
-      }
-    }
-}
-        
-#else
-
-/**
- * @brief       生成旋转因此，用于 FFT 运算
- * @param        model: 用于确定生成 FFT 的旋转因子还是 IFFT的旋转因子
- *                N: 数组长度
- *
- * @return      Wnk: 指向生成的旋转因子的地址
- * @example
- * @note        本打算用于将生成的旋转因子存在堆内。由于最多只能存64k数据 因此现已经弃用。目前是 Wnk 和 iWnk 把声明成const外部变量存储在flash
- *
- */
-type_complex *init_Wnk(uint8 model, int N)   
-{  
-    int i;  
-
-    type_complex *Wnk=(type_complex *)malloc(sizeof(type_complex) * N);  //生成变换核  
-
-    if (model)
-      for(i=0;i < N/2;i++) {  
-          Wnk[i].re = cos(2*PI/N*i);   //用欧拉公式计算fft旋转因子  
-          Wnk[i].im = -1*sin(2*PI/N*i);  
-      }
-    else
-      for(i=0;i < N;i++) {  
-          Wnk[i].re = cos(2*PI/N*i);   //用欧拉公式计算ifft旋转因子  
-          Wnk[i].im = sin(2*PI/N*i);  
-      }
-    
-    return Wnk;
-}
-
-#endif
 
 /**
  * @brief       快速傅里叶变换的实现函数
@@ -354,15 +311,31 @@ void amplitude_and_mean_process(type_complex sample[])
  * @param       sample[]: 待滤波的频域数据
  * @return
  * @example     
- * @note        此函数实现频域滤波，直接将不想要的频率成分乘上一个很小的值
+ * @note        此函数实现频域滤波，直接将不想要的频率成分乘上一个很小的值，这个数字后一定要加上f，因为这样运算速率将大大提高
  */
-static void low_pass_filter(type_complex sample[])
+void low_pass_filter(type_complex sample[])
 {
+  /*
   for (int i = 0; i < _N; i++)
     if (i < 203 || (i > 819 && i < 3276) || i > 3892 || (i > 448 && i < 573) || (i > 3522 && i < 3647)) {
-      sample[i].re = 0.0001 * sample[i].re;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
-      sample[i].im = 0.0001 * sample[i].im;//sqrt(pow(sample[i].re, 2) + pow(sample[i].im, 2));
+      sample[i].re = 0.0001 * sample[i].re;
+      sample[i].im = 0.0001 * sample[i].im;
     }
+  */
+  
+  //此为优化后算法
+  for (int i = 0; i < _N; i++) {
+    if (i > 202 && i < 820) {
+      ;
+    }
+    else if (i > 3275 && i < 3893) {
+      ;
+    }
+    else {
+      sample[i].re = 0.0001f * sample[i].re;
+      sample[i].im = 0.0001f * sample[i].im;
+    }
+  }
 }
 
 
@@ -418,10 +391,10 @@ void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], c
  *
  * @return      max_queue[(N - 1)/2]: 
  * @example     
- * @note        用于对互相关结果的最大值索引 max  进行滤波，该函数只被 distance_difference 函数调用
+ * @note        用于对互相关结果的最大值索引 max  进行滤波
  *
  */
-static int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N)
+int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N)
 {
   int max_queue[N], flag;
   
@@ -486,8 +459,18 @@ float distance_difference(float V_sound, type_complex sample_d[], type_complex s
   
   max_chosen = midst_filter(max_now, max_queue, 9);
   
-   return V_sound * ((max_chosen - _N/2 + 1)  * DELTA_TIME +  19e-6);
+   return V_sound * ((max_chosen - _N/2 + 1)  * DELTA_TIME +  19e-6f);
 }
+
+
+/**
+ * @brief       为任务
+ *
+ */
+
+
+
+
 
 
 //音速辨识，测量十次。
@@ -518,7 +501,7 @@ float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], t
 }
 
 FFT_EXT const type_complex kWnk_fft[] = {
-	{1.000000, -0.000000},  {0.999999, -0.001534},  {0.999995, -0.003068},  {0.999989, -0.004602},
+{1.000000, -0.000000},  {0.999999, -0.001534},  {0.999995, -0.003068},  {0.999989, -0.004602},
 {0.999981, -0.006136},  {0.999971, -0.007670},  {0.999958, -0.009204},  {0.999942, -0.010738},
 {0.999925, -0.012272},  {0.999905, -0.013805},  {0.999882, -0.015339},  {0.999858, -0.016873},
 {0.999831, -0.018407},  {0.999801, -0.019940},  {0.999769, -0.021474},  {0.999735, -0.023008},

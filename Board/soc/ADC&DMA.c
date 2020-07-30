@@ -177,13 +177,15 @@ void data_reprocess(type_complex sample_s[], type_complex sample_d[])
 {
   
   for (int i = 0; i < _N/2; i++) {
-    sample_d[i].re = sample_s[i].im;
+    sample_d[_N/2-i-1].re = sample_s[i].im;
     sample_d[i].im = 0;
     sample_s[i].im = 0;
   }
   
   for (int i = _N/2; i < _N; i++) {
     sample_s[i].re = 0;
+    sample_s[i].im = 0;
+    sample_d[i].re = 0;
     sample_d[i].im = 0;
   }
 }

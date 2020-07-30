@@ -4,7 +4,7 @@
 /**
  * @brief       节拍中断周期
  */
-#define TASK_RHYTHM_T   20      //20ms 进一次中断作为任务节拍
+#define TASK_RHYTHM_T   75      //70ms 进一次中断作为任务节拍
 
 /**
  * @brief       子任务控制流程宏定义
@@ -25,7 +25,17 @@ typedef enum {
   TASK_DELAY
 } task_status_t;
 
-typedef uint8_t task_commu_t;
+/**
+ * @brief       任务间同步变量
+ */
+typedef struct {
+  uint8_t       flag;
+  int16_t       int16_val;
+  uint16_t      uint16_val;
+  int32_t       int32_val;
+  uint32_t      uint32_val;
+  float         float_val;
+} task_commu_t;
 
 /**
  * @brief       子任务状态枚举
