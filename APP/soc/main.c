@@ -22,21 +22,29 @@ int main(void)
     NVIC_SetPriorityGrouping(0x07 - 2);
     
     /* 优先级配置 抢占优先级0  子优先级2   越小优先级越高  抢占优先级可打断别的中断 */
-    NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));
+    NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));    
+    NVIC_SetPriority(LPUART0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,1));
+    
+    NVIC_SetPriority(PIT0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,0));
+    NVIC_SetPriority(DMA0_DMA16_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,1));
+    NVIC_SetPriority(DMA2_DMA18_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,2));
     
     LED_Init();
     
-    LPTMR_PulseInit(LPT0_ALT1,32768,LPT_Rising);  
     systime.init(); 
     
     UART_Init(UART4, 115200);           //用于显示波形
     
-    ADC_Init(ADC1);                    //ADC1初始化
-    ADC_Init(ADC0);
-    
     motor_init();
     
-    int time;
+    ADC_Init(ADC0);                    //ADC0初始化
+    ADC_Init(ADC1);                    //ADC1初始化
+    ADC_in_DMA_mode_instance_conf(50);  //周期为50us
+    
+    task_rhythm_init(TASK_RHYTHM_T);    //任务调度器初始化
+   
+    
+    //int time;
     
     //type_complex *Wnk_fft, *Wnk_ifft;
     //Wnk_fft = init_Wnk(fft, _N);
@@ -44,19 +52,21 @@ int main(void)
         
     //float V_sound = V_sound_Identification(sample_dx, sample_sx, z, Wnk_fft, Wnk_ifft, ADC1_SE8, ADC1_SE9, ADC1, ADC1); //音速辨识
     
-    float V_sound = 352;
+    //float V_sound = 352;
     
     while(1) {
       
-      sample_get();
+      task_process();
+    
+      //**sample_get();
       
       //LPTMR_TimeStartms();
-      float sx = distance_difference(V_sound, sample_dx, sample_sx, z, kWnk_fft, kWnk_ifft/*, ADC0_SE9, ADC0_SE8, ADC0, ADC0*/);
+      //** float sx = distance_difference(V_sound, sample_dx, sample_sx, z, kWnk_fft, kWnk_ifft/*, ADC0_SE9, ADC0_SE8, ADC0, ADC0*/);
       //time = LPTMR_TimeGetms();
       
-      float sy = distance_difference(V_sound, sample_dy, sample_sy, z, kWnk_fft, kWnk_ifft/*, ADC1_SE7a, ADC1_SE6a, ADC1, ADC1*/);
+      //** float sy = distance_difference(V_sound, sample_dy, sample_sy, z, kWnk_fft, kWnk_ifft/*, ADC1_SE7a, ADC1_SE6a, ADC1, ADC1*/);
       
-      car_move(sx, sy);
+      //** car_move(sx, sy);
            
       /*
       IFFT(sample_sx, kWnk_ifft, _N);
@@ -85,11 +95,11 @@ int main(void)
       }
       */
       //printf("%d\n", time);
-      
+      /*
       int max_x = (sx / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1;
       int max_y = (sy / V_sound - 19e-6) / DELTA_TIME + _N/2 - 1; 
       ANO_DT_send_int16((int16)(max_x - _N/2 + 1), (int16)(max_y - _N/2 + 1), 0, 0, 0, 0, 0, 0);
-      
+      */
     }
 }
 

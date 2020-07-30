@@ -69,6 +69,8 @@
 #include "Slide_average_filter.h"
 #include "Longer_motor.h"
 #include "LG_GLOBAL.h"
+#include "ADC&DMA.h"
+#include "task_scheduler.h"
 
 
 #endif

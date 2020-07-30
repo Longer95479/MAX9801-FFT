@@ -181,3 +181,5 @@ uint16_t ADC_Ave(ADC_Type * adc_n,ADCn_Ch_e adc_ch,ADC_nbit bit,uint16_t N) //¾ù
     
     return (uint16_t)tmp;
 }
+
+

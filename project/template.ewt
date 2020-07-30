@@ -2381,6 +2381,9 @@
     <group>
         <name>Board</name>
         <file>
+            <name>$PROJ_DIR$\..\Board\soc\ADC&amp;DMA.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Board\soc\ANO_DT.c</name>
         </file>
         <file>
@@ -2397,6 +2400,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Board\soc\Slide_average_filter.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Board\soc\task_scheduler.c</name>
         </file>
     </group>
     <group>
