@@ -2105,6 +2105,9 @@
             <name>$PROJ_DIR$\..\Board\soc\LQ_LED.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Board\soc\PID.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Board\soc\Slide_average_filter.c</name>
         </file>
         <file>

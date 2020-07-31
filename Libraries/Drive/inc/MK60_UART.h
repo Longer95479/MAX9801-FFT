@@ -96,6 +96,15 @@ void UART_PutStr(UART_Type * uratn, char *str);
 //-------------------------------------------------------------------------*
 char UART_GetChar(UART_Type * uratn);
 
+/**
+ * @brief       接收字符串
+ * @param       uratn: 串口
+ *              buff：接收字符的数组
+ *              len：接收字符数目
+ *
+ */
+void UART_GetStr(UART_Type * uratn, char *buff, uint32 len);
+
 
 uint8_t UART_GetNum(UART_Type * uartn);
 /********************************************************************/
