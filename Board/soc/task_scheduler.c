@@ -24,7 +24,7 @@
 /**
  * @brief       任务个数
  */
-#define TASK_NUM        5
+#define TASK_NUM        1
 
 /**
  * @brief       任务活跃数，当不为0时激活任务调度器
@@ -68,10 +68,10 @@ typedef enum {
  */
 static task_t tasks[TASK_NUM] = {
   {TASK_DELAY, TASK0_TIMER_INIT_VAL, TASK0_TIMER_INIT_VAL, NULL, task0_entry},
-  {TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
-  {TASK_DELAY, TASK2_TIMER_INIT_VAL, TASK2_TIMER_INIT_VAL, NULL, task2_entry},
-  {TASK_DELAY, TASK3_TIMER_INIT_VAL, TASK3_TIMER_INIT_VAL, NULL, task3_entry},
-  {TASK_DELAY, TASK4_TIMER_INIT_VAL, TASK4_TIMER_INIT_VAL, NULL, task4_entry},
+  //**{TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
+  //**{TASK_DELAY, TASK2_TIMER_INIT_VAL, TASK2_TIMER_INIT_VAL, NULL, task2_entry},
+  //**{TASK_DELAY, TASK3_TIMER_INIT_VAL, TASK3_TIMER_INIT_VAL, NULL, task3_entry},
+  //**{TASK_DELAY, TASK4_TIMER_INIT_VAL, TASK4_TIMER_INIT_VAL, NULL, task4_entry},
 };   
 /***********************************************************************/
 /***********************************************************************/
@@ -91,7 +91,7 @@ static uint32_t PIT1_get_time(void);
 void task0_entry(void *arg)
 { 
   LED_Reverse(2);
-  printf("task0 is running\n");
+  //printf("task0 is running\n");
 }
 
 
@@ -352,7 +352,22 @@ SUBTASK_CASE SUBTASK_STATUS1:
   }
   */
   
-  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, 0, 0, 0, 0, 0, 0);
+  static float dx, dy, x, y, theta;
+  
+  dx = 0.034f * t4wft2_can_xUART.int16_val;
+  dy = 0.034f * t4wft3_can_yUART.int16_val;
+  
+  x = dx / (2*_L) / InvSqrt(((_L*_L - dy*dy) * (_L*_L + dy*dy - dx*dx)) / (_L*_L - dx*dx -dy*dy));
+  y = dy / (2*_L) / InvSqrt(((_L*_L - dx*dx) * (_L*_L + dx*dx - dy*dy)) / (_L*_L - dx*dx -dy*dy));
+  
+  theta = atan2(y, x);
+  if (theta > 3.13 || theta < -3.13)
+    if (t4wft2_can_xUART.int16_val > 0)
+      theta = 0;
+    else
+      theta = PI;
+  
+  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, (int16_t)(x * 100), (int16_t)(y * 100), (theta * 100), 0, 0, 0);
   
   t4wft2_can_xUART.flag = 0;
   t4wft3_can_yUART.flag = 0;
@@ -647,7 +662,7 @@ void task_rhythm(void)
       
     }    
   }  
-  printf("\n*********\n");      //only for debug
+  //printf("\n*********\n");      //only for debug
 }
 
 

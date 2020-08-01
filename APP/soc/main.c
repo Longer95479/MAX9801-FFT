@@ -22,9 +22,7 @@ int main(void)
     NVIC_SetPriorityGrouping(0x07 - 2);
     
     /* 优先级配置 抢占优先级0  子优先级2   越小优先级越高  抢占优先级可打断别的中断 */
-    NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));    
-    NVIC_SetPriority(LPUART0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,1));
-    
+    NVIC_SetPriority(UART4_RX_TX_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1,2));        
     NVIC_SetPriority(PIT0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,0));
     NVIC_SetPriority(DMA0_DMA16_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,1));
     NVIC_SetPriority(DMA2_DMA18_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0,2));
@@ -34,7 +32,11 @@ int main(void)
     systime.init(); 
     
     UART_Init(UART4, 115200);           //用于显示波形
+    NVIC_EnableIRQ(UART4_RX_TX_IRQn);   //使能UART4_RX_TX_IRQn的中断
     
+    PID_init();
+    Enc_TPM12_Init();
+    PIT_Init_For_IT(PIT2, 10);
     motor_init();
     
     ADC_Init(ADC0);                    //ADC0初始化

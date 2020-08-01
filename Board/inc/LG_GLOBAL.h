@@ -45,3 +45,30 @@ extern uint8_t g_ADC1_mux[2];
 ADCDMA_EXT uint8_t x_ready_for_fft;
 ADCDMA_EXT uint8_t y_ready_for_fft;
 
+
+
+
+#ifdef  PID_GLOBALS
+#define PID_EXT
+#else
+#define PID_EXT extern
+#endif  //PID_GLOBALS
+/**
+ * @brief       pid 控制结构体
+ */
+typedef struct { 
+    float SetSpeed; //定义设定值 
+    float ActualSpeed; //定义实际值 
+    float err; //定义偏差值 
+    float err_next; //定义上一个偏差值 
+    float err_last; //定义上一个偏差值 
+    float Kp,Ki,Kd; //定义比例、积分、微分系数
+} pid_t;
+
+/**
+ * @brief       四轮pid控制实例
+ */
+PID_EXT pid_t pid[4];
+
+
+

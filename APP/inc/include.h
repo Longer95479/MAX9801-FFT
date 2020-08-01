@@ -71,6 +71,7 @@
 #include "LG_GLOBAL.h"
 #include "ADC&DMA.h"
 #include "task_scheduler.h"
+#include "PID.h"
 
 
 #endif

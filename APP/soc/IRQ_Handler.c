@@ -108,7 +108,9 @@ void PIT1_IRQHandler()
 void PIT2_IRQHandler()
 {
     PIT_Flag_Clear(PIT2);       //清中断标志位
-    /*用户添加所需代码*/
+    
+    get_speed_and_control();
+    
 }
 /*---------------------------------------------------------------
 【函    数】PIT3_Interrupt
@@ -252,7 +254,13 @@ void UART4_RX_TX_IRQHandler(void)
     if(UART4_S1 & UART_S1_RDRF_MASK)                                     //接收数据寄存器满
     {
         //用户需要处理接收数据
-        printf("接收到字符： %c \n", UART_GetChar(UART4));
+        LED_Reverse(1);
+        
+        char buffer[17];
+        
+        UART_GetStr(UART4, buffer, 17);
+        
+        pid_param_adjust(buffer);
     }
     
 }
