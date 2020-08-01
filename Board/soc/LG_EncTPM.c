@@ -252,7 +252,7 @@ void get_speed_and_control(void)
     
   }
   
-#if 0   
+#if 1   
   //œ‘ æ≤®–Œ
   ANO_DT_send_int16((short)(rps_1 * 100), (short)(rps_2 * 100), (short)(rps_3 * 100), (short)(rps_4 * 100), (short)(rps1_set * 100), (short)(rps2_set * 100), (short)(rps3_set * 100), (short)(rps4_set * 100));
 #endif
