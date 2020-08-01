@@ -493,7 +493,7 @@ float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], t
   
   sum_of_max /= TIMES;
   
-  float V_sound = DISTANCE / ((sum_of_max - _N/2 + 1)  * DELTA_TIME +  19e-6);
+  float V_sound = _L / ((sum_of_max - _N/2 + 1)  * DELTA_TIME +  19e-6);
   
   return V_sound;
   

@@ -19,36 +19,36 @@ void PID_init(void)
   pid[0].err = 0.0; 
   pid[0].err_last = 0.0; 
   pid[0].err_next =0.0; 
-  pid[0].Kp = 0.2; 
-  pid[0].Ki = 0.015; 
-  pid[0].Kd = 0.2; 
+  pid[0].Kp = 0; 
+  pid[0].Ki = 0; 
+  pid[0].Kd = 0; 
   
   pid[1].SetSpeed = 0.0; 
   pid[1].ActualSpeed = 0.0; 
   pid[1].err = 0.0; 
   pid[1].err_last = 0.0; 
   pid[1].err_next =0.0; 
-  pid[1].Kp = 0.2; 
-  pid[1].Ki = 0.015; 
-  pid[1].Kd = 0.2; 
+  pid[1].Kp = 0; 
+  pid[1].Ki = 0; 
+  pid[1].Kd = 0; 
   
   pid[2].SetSpeed = 0.0; 
   pid[2].ActualSpeed = 0.0; 
   pid[2].err = 0.0; 
   pid[2].err_last = 0.0; 
   pid[2].err_next =0.0; 
-  pid[2].Kp = 0.2; 
-  pid[2].Ki = 0.015; 
-  pid[2].Kd = 0.2; 
+  pid[2].Kp = 0; 
+  pid[2].Ki = 0; 
+  pid[2].Kd = 0; 
   
   pid[3].SetSpeed = 0.0; 
   pid[3].ActualSpeed = 0.0; 
   pid[3].err = 0.0; 
   pid[3].err_last = 0.0; 
   pid[3].err_next =0.0; 
-  pid[3].Kp = 0.2; 
-  pid[3].Ki = 0.015; 
-  pid[3].Kd = 0.2; 
+  pid[3].Kp = 0; 
+  pid[3].Ki = 0; 
+  pid[3].Kd = 0; 
   
 }
 
