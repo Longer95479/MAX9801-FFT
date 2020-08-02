@@ -63,6 +63,7 @@ typedef struct {
     float err_next; //定义上一个偏差值 
     float err_last; //定义上一个偏差值 
     float Kp,Ki,Kd; //定义比例、积分、微分系数
+    float epsilon; //偏差检测阈值
 } pid_t;
 
 /**

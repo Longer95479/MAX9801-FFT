@@ -24,7 +24,7 @@
 /**
  * @brief       任务个数
  */
-#define TASK_NUM        6
+#define TASK_NUM        1
 
 /**
  * @brief       任务活跃数，当不为0时激活任务调度器
@@ -72,11 +72,11 @@ typedef enum {
  */
 static task_t tasks[TASK_NUM] = {
   {TASK_DELAY, TASK0_TIMER_INIT_VAL, TASK0_TIMER_INIT_VAL, NULL, task0_entry},
-  {TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
+  /*{TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
   {TASK_DELAY, TASK2_TIMER_INIT_VAL, TASK2_TIMER_INIT_VAL, NULL, task2_entry},
   {TASK_DELAY, TASK3_TIMER_INIT_VAL, TASK3_TIMER_INIT_VAL, NULL, task3_entry},
   {TASK_DELAY, TASK4_TIMER_INIT_VAL, TASK4_TIMER_INIT_VAL, NULL, task4_entry},
-  {TASK_DELAY, TASK8_TIMER_INIT_VAL, TASK8_TIMER_INIT_VAL, NULL, task8_entry},
+  {TASK_DELAY, TASK8_TIMER_INIT_VAL, TASK8_TIMER_INIT_VAL, NULL, task8_entry},*/
 };   
 /***********************************************************************/
 /***********************************************************************/

@@ -191,11 +191,11 @@ void get_speed_and_control(void)
     rps1_set = PID_realize(pid[0].SetSpeed, &(pid[0]));   //此处的值传给电机    
     if (rps1_set > 0) {
       GPIO_PinInit(PTC3, GPO, 1);
-      FTM_PwmDuty(FTM0, FTM_CH3, (uint16_t)((0.031188f * rps1_set + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH3, (uint16_t)((0.031188f * rps1_set /*+ 0.032839f*/) * 12000));
     }
     else {
       GPIO_PinInit(PTC3, GPO, 0);
-      FTM_PwmDuty(FTM0, FTM_CH3, (uint16_t)((0.031188f * (-rps1_set) + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH3, (uint16_t)((0.031188f * (-rps1_set) /*+ 0.032839f*/) * 12000));
     }
     
     
@@ -203,11 +203,11 @@ void get_speed_and_control(void)
     rps2_set = PID_realize(pid[1].SetSpeed, &(pid[1]));   //此处的值传给电机
     if (rps2_set > 0) {
       GPIO_PinInit(PTD0, GPO, 0);
-      FTM_PwmDuty(FTM0, FTM_CH5, (uint16_t)((0.031188f * rps2_set + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH5, (uint16_t)((0.031188f * rps2_set /*+ 0.032839f*/) * 12000));
     }
     else {
       GPIO_PinInit(PTD0, GPO, 1);
-      FTM_PwmDuty(FTM0, FTM_CH5, (uint16_t)((0.031188f * (-rps2_set) + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH5, (uint16_t)((0.031188f * (-rps2_set) /*+ 0.032839f*/) * 12000));
     }
     
     break;
@@ -230,22 +230,22 @@ void get_speed_and_control(void)
     rps3_set = PID_realize(pid[2].SetSpeed, &(pid[2]));   //此处的值传给电机
     if (rps3_set > 0) {
       GPIO_PinInit(PTD6, GPO, 1);
-      FTM_PwmDuty(FTM0, FTM_CH7, (int)((0.031188f * rps3_set + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH7, (int)((0.031188f * rps3_set /*+ 0.032839f*/) * 12000));
     }
     else {
       GPIO_PinInit(PTD6, GPO, 0);
-      FTM_PwmDuty(FTM0, FTM_CH7, (int)((0.031188f * (-rps3_set) + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH7, (int)((0.031188f * (-rps3_set) /*+ 0.032839f*/) * 12000));
     }
     
     pid[3].ActualSpeed = rps_4;
     rps4_set = PID_realize(pid[3].SetSpeed, &(pid[3]));   //此处的值传给电机
     if (rps4_set > 0) {
       GPIO_PinInit(PTC1, GPO, 1);
-      FTM_PwmDuty(FTM0, FTM_CH1, (int)((0.031188f * rps4_set + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH1, (int)((0.031188f * rps4_set /*+ 0.032839f*/) * 12000));
     }
     else {
       GPIO_PinInit(PTC1, GPO, 0);
-      FTM_PwmDuty(FTM0, FTM_CH1, (int)((0.031188f * (-rps4_set) + 0.032839f) * 12000));
+      FTM_PwmDuty(FTM0, FTM_CH1, (int)((0.031188f * (-rps4_set) /*+ 0.032839f*/) * 12000));
     }
     
     break;

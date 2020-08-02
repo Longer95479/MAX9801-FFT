@@ -19,38 +19,67 @@ void PID_init(void)
   pid[0].err = 0.0; 
   pid[0].err_last = 0.0; 
   pid[0].err_next =0.0; 
-  pid[0].Kp = 6.5; 
-  pid[0].Ki = 1.5; 
-  pid[0].Kd = 0; 
+  pid[0].Kp = 0.5; 
+  pid[0].Ki = 6; 
+  pid[0].Kd = 0;
+  pid[0].epsilon = 0.5;
   
   pid[1].SetSpeed = 0.0; 
   pid[1].ActualSpeed = 0.0; 
   pid[1].err = 0.0; 
   pid[1].err_last = 0.0; 
   pid[1].err_next =0.0; 
-  pid[1].Kp = 5; 
-  pid[1].Ki = 6; 
-  pid[1].Kd = 0.5; 
+  pid[1].Kp = 0.5; 
+  pid[1].Ki = 7; 
+  pid[1].Kd = 0; 
+  pid[1].epsilon = 0.5;
   
   pid[2].SetSpeed = 0.0; 
   pid[2].ActualSpeed = 0.0; 
   pid[2].err = 0.0; 
   pid[2].err_last = 0.0; 
   pid[2].err_next =0.0; 
-  pid[2].Kp = 5; 
-  pid[2].Ki = 5; 
+  pid[2].Kp = 0.1; 
+  pid[2].Ki = 4; 
   pid[2].Kd = 0; 
+  pid[2].epsilon = 0.5;
   
   pid[3].SetSpeed = 0.0; 
   pid[3].ActualSpeed = 0.0; 
   pid[3].err = 0.0; 
   pid[3].err_last = 0.0; 
   pid[3].err_next =0.0; 
-  pid[3].Kp = 1; 
-  pid[3].Ki = 4; 
-  pid[3].Kd = 0.7; 
+  pid[3].Kp = 0.5; 
+  pid[3].Ki = 5; 
+  pid[3].Kd = 0; 
+  pid[3].epsilon = 0.5;
   
 }
+
+
+/**
+ * @brief       积分分离，计算  beta
+ * @param       error: 当前偏差
+ *               epsilon: 分离阈值
+ *
+ * @return      beta : 分离系数，非0即1
+ * @example
+ * @note        内部使用
+ *
+ */
+static float beta_generation(float error, float epsilon)
+{
+  float beta = 0.4;
+  
+  if(fabs(error) <= epsilon)
+    beta = 1;
+    
+  return beta;
+  
+}
+
+
+
 
 /**
  * @brief       PID实现函数
@@ -62,10 +91,13 @@ void PID_init(void)
  */
 float PID_realize(float speed, pid_t *pid)
 {
+  static float beta;
   pid->SetSpeed = speed; 
   pid->err = pid->SetSpeed - pid->ActualSpeed; 
   
-  float incrementSpeed = pid->Kp * (pid->err - pid->err_next) + pid->Ki * pid->err + pid->Kd * (pid->err - 2 * pid->err_next + pid->err_last);
+  beta = beta_generation(pid->err, 0.5);
+  
+  float incrementSpeed = pid->Kp * (pid->err - pid->err_next) + beta * pid->Ki * pid->err + pid->Kd * (pid->err - 2 * pid->err_next + pid->err_last);
   
   pid->ActualSpeed += incrementSpeed; 
   pid->err_last = pid->err_next; 
