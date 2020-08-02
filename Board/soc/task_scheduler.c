@@ -24,7 +24,7 @@
 /**
  * @brief       任务个数
  */
-#define TASK_NUM        1
+#define TASK_NUM        6
 
 /**
  * @brief       任务活跃数，当不为0时激活任务调度器
@@ -38,6 +38,8 @@ static task_commu_t t2wft1_can_xfft = {0};
 static task_commu_t t3wft1_can_yfft = {0};
 static task_commu_t t4wft2_can_xUART = {0};
 static task_commu_t t4wft3_can_yUART = {0};
+static task_commu_t t4tst8_car_stop = {1};
+static task_commu_t t8wft4_theta = {0};
 
 
 /**
@@ -48,6 +50,7 @@ void task1_entry(void *arg);
 void task2_entry(void *arg);
 void task3_entry(void *arg);
 void task4_entry(void *arg);
+void task8_entry(void *arg);
 
 /**
  * @brief       任务实例定时器初始值
@@ -57,7 +60,8 @@ typedef enum {
   TASK1_TIMER_INIT_VAL = 1,
   TASK2_TIMER_INIT_VAL = 1,
   TASK3_TIMER_INIT_VAL = 1,
-  TASK4_TIMER_INIT_VAL = 2,
+  TASK4_TIMER_INIT_VAL = 1,
+  TASK8_TIMER_INIT_VAL = 1
 } task_timer_init_val_instance;
    
    
@@ -68,10 +72,11 @@ typedef enum {
  */
 static task_t tasks[TASK_NUM] = {
   {TASK_DELAY, TASK0_TIMER_INIT_VAL, TASK0_TIMER_INIT_VAL, NULL, task0_entry},
-  //**{TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
-  //**{TASK_DELAY, TASK2_TIMER_INIT_VAL, TASK2_TIMER_INIT_VAL, NULL, task2_entry},
-  //**{TASK_DELAY, TASK3_TIMER_INIT_VAL, TASK3_TIMER_INIT_VAL, NULL, task3_entry},
-  //**{TASK_DELAY, TASK4_TIMER_INIT_VAL, TASK4_TIMER_INIT_VAL, NULL, task4_entry},
+  {TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
+  {TASK_DELAY, TASK2_TIMER_INIT_VAL, TASK2_TIMER_INIT_VAL, NULL, task2_entry},
+  {TASK_DELAY, TASK3_TIMER_INIT_VAL, TASK3_TIMER_INIT_VAL, NULL, task3_entry},
+  {TASK_DELAY, TASK4_TIMER_INIT_VAL, TASK4_TIMER_INIT_VAL, NULL, task4_entry},
+  {TASK_DELAY, TASK8_TIMER_INIT_VAL, TASK8_TIMER_INIT_VAL, NULL, task8_entry},
 };   
 /***********************************************************************/
 /***********************************************************************/
@@ -367,7 +372,13 @@ SUBTASK_CASE SUBTASK_STATUS1:
     else
       theta = PI;
   
-  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, (int16_t)(x * 100), (int16_t)(y * 100), (theta * 100), 0, 0, 0);
+  //通讯部分
+  if (t4tst8_car_stop.flag == 1) {
+    t8wft4_theta.float_val = theta;
+    t8wft4_theta.int16_val ++;    //theta生成计数
+  }
+  
+  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, (int16_t)(x * 100), (int16_t)(y * 100), (int16_t)(theta * 100), 0, 0, 0);
   
   t4wft2_can_xUART.flag = 0;
   t4wft3_can_yUART.flag = 0;
@@ -378,6 +389,78 @@ SUBTASK_BREAK
   
 SUBTASK_END  
     
+}
+
+
+/**
+ * @brief       任务8入口函数，速度控制
+ */
+void task8_entry(void *arg)
+{
+  static float theta_mean = 0;         //在进入停车状态前记得清零
+  static const int8_t sum_time = 4;           //theta累加次数
+  static uint8_t car_run_last_time = 20;        //开车时间，car_run_last_time * TASK_RHYTHM_T
+  
+CREAT_SUBTASK
+SUBTASK_BEGIN
+
+//停车，确定方位
+SUBTASK_CASE SUBTASK_STATUS0:
+  
+  theta_mean += t8wft4_theta.float_val;
+  if (t8wft4_theta.int16_val == sum_time) {
+    t8wft4_theta.int16_val = 0;         //theta 计数清零
+    
+    LED_OFF(1);         //用于测试
+    t4tst8_car_stop.flag = 0;                //即将进入运动状态
+    
+    theta_mean /= sum_time;
+    
+    SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
+  }
+  SUBTASK_BREAK
+    
+
+// 计算四轮速度
+SUBTASK_CASE SUBTASK_STATUS1: 
+  ;     //此句是为了消除 Warning[Pe1072]: a declaration cannot have a label
+  
+  static float vx, vy, wheel_v[4];
+  
+  vx = 6 * cos(theta_mean);         //rps * cos(theta)
+  vy = 6 * sin(theta_mean);         //rps * sin(theta)
+  
+  wheel_v[0] = vx + vy;
+  wheel_v[1] = -vx + vy;
+  wheel_v[2] = vx + vy;
+  wheel_v[3] = -vx + vy;
+  
+  for (int i = 0; i < 4; i++)
+    pid[i].SetSpeed = wheel_v[i];
+  
+  car_run_last_time = 20;        //20 * TASK_RHYTHM_T
+  
+  SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS2;
+  SUBTASK_BREAK
+    
+
+//开车状态
+SUBTASK_CASE SUBTASK_STATUS2:    
+  LED_ON(1);
+  if (!(--car_run_last_time)) {
+    car_stop();
+    
+    t4tst8_car_stop.flag = 1;
+    
+    theta_mean = 0;
+    
+    SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
+  }
+  SUBTASK_BREAK
+  
+
+SUBTASK_END
+  
 }
 
 

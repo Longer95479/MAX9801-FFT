@@ -159,3 +159,21 @@ void car_move(float sx, float sy)
     
 }
 
+/**
+ * @brief       Í£³µ
+ */
+void car_stop(void)
+{
+  for (int i = 0; i < 4; i++) {
+    pid[i].SetSpeed = 0;
+  }
+  
+  FTM_PwmDuty(FTM0, FTM_CH1, 0);
+  
+  FTM_PwmDuty(FTM0, FTM_CH5, 0);
+  
+  FTM_PwmDuty(FTM0, FTM_CH7, 0);
+  
+  FTM_PwmDuty(FTM0, FTM_CH2, 0);
+}
+
