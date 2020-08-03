@@ -24,7 +24,7 @@
 /**
  * @brief       任务个数
  */
-#define TASK_NUM        1
+#define TASK_NUM        6
 
 /**
  * @brief       任务活跃数，当不为0时激活任务调度器
@@ -72,11 +72,11 @@ typedef enum {
  */
 static task_t tasks[TASK_NUM] = {
   {TASK_DELAY, TASK0_TIMER_INIT_VAL, TASK0_TIMER_INIT_VAL, NULL, task0_entry},
-  /*{TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
+  {TASK_DELAY, TASK1_TIMER_INIT_VAL, TASK1_TIMER_INIT_VAL, NULL, task1_entry},
   {TASK_DELAY, TASK2_TIMER_INIT_VAL, TASK2_TIMER_INIT_VAL, NULL, task2_entry},
   {TASK_DELAY, TASK3_TIMER_INIT_VAL, TASK3_TIMER_INIT_VAL, NULL, task3_entry},
   {TASK_DELAY, TASK4_TIMER_INIT_VAL, TASK4_TIMER_INIT_VAL, NULL, task4_entry},
-  {TASK_DELAY, TASK8_TIMER_INIT_VAL, TASK8_TIMER_INIT_VAL, NULL, task8_entry},*/
+  {TASK_DELAY, TASK8_TIMER_INIT_VAL, TASK8_TIMER_INIT_VAL, NULL, task8_entry},
 };   
 /***********************************************************************/
 /***********************************************************************/
@@ -398,8 +398,8 @@ SUBTASK_END
 void task8_entry(void *arg)
 {
   static float theta_mean = 0;         //在进入停车状态前记得清零
-  static const int8_t sum_time = 4;           //theta累加次数
-  static uint8_t car_run_last_time = 20;        //开车时间，car_run_last_time * TASK_RHYTHM_T
+  static const int8_t sum_time = 8;           //theta累加次数
+  static uint8_t car_run_last_time = 10;        //开车时间，car_run_last_time * TASK_RHYTHM_T
   
 CREAT_SUBTASK
 SUBTASK_BEGIN
@@ -438,7 +438,7 @@ SUBTASK_CASE SUBTASK_STATUS1:
   for (int i = 0; i < 4; i++)
     pid[i].SetSpeed = wheel_v[i];
   
-  car_run_last_time = 20;        //20 * TASK_RHYTHM_T
+  car_run_last_time = 10;        //20 * TASK_RHYTHM_T
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS2;
   SUBTASK_BREAK

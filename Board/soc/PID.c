@@ -19,8 +19,8 @@ void PID_init(void)
   pid[0].err = 0.0; 
   pid[0].err_last = 0.0; 
   pid[0].err_next =0.0; 
-  pid[0].Kp = 0.6; 
-  pid[0].Ki = 6; 
+  pid[0].Kp = 2; 
+  pid[0].Ki = 4; 
   pid[0].Kd = 0;
   pid[0].epsilon = 0.5;
   
@@ -29,8 +29,8 @@ void PID_init(void)
   pid[1].err = 0.0; 
   pid[1].err_last = 0.0; 
   pid[1].err_next =0.0; 
-  pid[1].Kp = 0.5; 
-  pid[1].Ki = 7.5; 
+  pid[1].Kp = 1; 
+  pid[1].Ki = 4.2; 
   pid[1].Kd = 0; 
   pid[1].epsilon = 0.5;
   
@@ -39,8 +39,8 @@ void PID_init(void)
   pid[2].err = 0.0; 
   pid[2].err_last = 0.0; 
   pid[2].err_next =0.0; 
-  pid[2].Kp = 0.1; 
-  pid[2].Ki = 6; 
+  pid[2].Kp = 2.5; 
+  pid[2].Ki = 4; 
   pid[2].Kd = 0; 
   pid[2].epsilon = 0.5;
   
@@ -49,8 +49,8 @@ void PID_init(void)
   pid[3].err = 0.0; 
   pid[3].err_last = 0.0; 
   pid[3].err_next =0.0; 
-  pid[3].Kp = 0.5; 
-  pid[3].Ki = 7; 
+  pid[3].Kp = 2; 
+  pid[3].Ki = 4.3; 
   pid[3].Kd = 0; 
   pid[3].epsilon = 0.5;
   
@@ -95,7 +95,7 @@ float PID_realize(float speed, pid_t *pid)
   pid->SetSpeed = speed; 
   pid->err = pid->SetSpeed - pid->ActualSpeed;
   
-  if (pid->err <= 0.5)
+  if (fabs(pid->err) <= 0.1)
     pid->err = 0;
   
   beta = beta_generation(pid->err, pid->epsilon);
