@@ -32,7 +32,7 @@ int main(void)
     systime.init(); 
     
     UART_Init(UART4, 115200);           //用于显示波形
-    NVIC_EnableIRQ(UART4_RX_TX_IRQn);   //使能UART4_RX_TX_IRQn的中断
+    //NVIC_EnableIRQ(UART4_RX_TX_IRQn);   //使能UART4_RX_TX_IRQn的中断
     
     PID_init();
     Enc_TPM12_Init();

@@ -38,7 +38,6 @@ static task_commu_t t2wft1_can_xfft = {0};
 static task_commu_t t3wft1_can_yfft = {0};
 static task_commu_t t4wft2_can_xUART = {0};
 static task_commu_t t4wft3_can_yUART = {0};
-static task_commu_t t4tst8_car_stop = {1};
 static task_commu_t t8wft4_theta = {0};
 
 
@@ -106,7 +105,9 @@ void task0_entry(void *arg)
  */
 void task1_entry(void *arg)
 {
+#ifdef TASK_TIME  
   PIT1_start_count();
+#endif  //TASK_TIME
   
   if (x_ready_for_fft == 1) {
     data_type_trans(sample_sx);
@@ -130,8 +131,9 @@ void task1_entry(void *arg)
     //LED_Reverse(1);
   }  
   
-  
+#ifdef TASK_TIME  
   printf("task1 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
   
 }
 
@@ -147,7 +149,10 @@ SUBTASK_BEGIN
 
 //! 波形标准化，sample_sx 的 FFT
 SUBTASK_CASE SUBTASK_STATUS0:
+  
+#ifdef TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
   
   if (t2wft1_can_xfft.flag == 1) {
     t2wft1_can_xfft.flag = 0;
@@ -159,8 +164,11 @@ SUBTASK_CASE SUBTASK_STATUS0:
     
     SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
   }
-  
+
+#ifdef    TASK_TIME
   printf("task2_subtask0 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK
 
 
@@ -174,13 +182,20 @@ SUBTASK_CASE SUBTASK_STATUS1:
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS2;
   
+#ifdef  TASK_TIME
   printf("task2_subtask1 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK
 
 
 //! 广义互相关处理
 SUBTASK_CASE SUBTASK_STATUS2:
+  
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
+  
   // 广义互相关
   for (int i = 0; i < _N; i++) {
     z_x[i] = complex_mult(sample_sx[i], sample_dx[i]);
@@ -196,13 +211,19 @@ SUBTASK_CASE SUBTASK_STATUS2:
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS3;
   
+#ifdef  TASK_TIME
   printf("task2_subtask2 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK  
 
 
 //! z 的 IFFT，查找互相关结果最大值的索引
 SUBTASK_CASE SUBTASK_STATUS3:
+  
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
   
   IFFT(z_x, kWnk_ifft, _N);
   
@@ -213,12 +234,15 @@ SUBTASK_CASE SUBTASK_STATUS3:
     if (z_x[i].re > z_x[max_now].re)
       max_now = i;
   
-  t4wft2_can_xUART.int16_val = midst_filter(max_now, max_queue, 5) - _N/2 + 1;
+  t4wft2_can_xUART.int16_val = midst_filter(max_now, max_queue, 3) - _N/2 + 1;
   t4wft2_can_xUART.flag = 1;
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
   
+#ifdef  TASK_TIME
   printf("task2_subtask3 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK
 
   
@@ -237,7 +261,10 @@ SUBTASK_BEGIN
 
 //! 波形标准化，sample_sy 的 FFT
 SUBTASK_CASE SUBTASK_STATUS0:
+  
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
   
   if (t3wft1_can_yfft.flag == 1) {
     t3wft1_can_yfft.flag = 0;
@@ -250,13 +277,19 @@ SUBTASK_CASE SUBTASK_STATUS0:
     SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
   }
   
+#ifdef  TASK_TIME
   printf("task3_subtask0 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK
 
 
 //! sample_dy 的 FFT，频域滤波
 SUBTASK_CASE SUBTASK_STATUS1:
+  
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
   
   FFT(sample_dy, kWnk_fft, _N);
   low_pass_filter(sample_sy);
@@ -264,13 +297,19 @@ SUBTASK_CASE SUBTASK_STATUS1:
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS2;
   
+#ifdef  TASK_TIME
   printf("task3_subtask1 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK
 
 
 //! 广义互相关
 SUBTASK_CASE SUBTASK_STATUS2:
+  
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
   
   // 广义互相关
   for (int i = 0; i < _N; i++) {
@@ -286,13 +325,18 @@ SUBTASK_CASE SUBTASK_STATUS2:
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS3;
   
+#ifdef  TASK_TIME
   printf("task3_subtask2 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK
 
 
 //! z 的 IFFT，查找互相关结果最大值的索引
 SUBTASK_CASE SUBTASK_STATUS3:
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
   
   IFFT(z_y, kWnk_ifft, _N);
   
@@ -303,12 +347,15 @@ SUBTASK_CASE SUBTASK_STATUS3:
     if (z_y[i].re > z_y[max_now].re)
       max_now = i;
   
-  t4wft3_can_yUART.int16_val = midst_filter(max_now, max_queue, 5) - _N/2 + 1;
+  t4wft3_can_yUART.int16_val = midst_filter(max_now, max_queue, 3) - _N/2 + 1;
   t4wft3_can_yUART.flag = 1;
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
   
+#ifdef  TASK_TIME
   printf("task3_subtask3 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK
 
   
@@ -326,17 +373,27 @@ SUBTASK_BEGIN
 
 // 检测用于传输的数据是否生成
 SUBTASK_CASE SUBTASK_STATUS0:
+  
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
   
   if (t4wft2_can_xUART.flag & t4wft3_can_yUART.flag == 1)
     SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
-
+  
+#ifdef  TASK_TIME
   printf("task4_subtask0 running time: %u.\n", PIT1_get_time());
+#endif
+  
 SUBTASK_BREAK
 
 //传输数据，传输完成后使能 DMA传输
 SUBTASK_CASE SUBTASK_STATUS1:
+  
+#ifdef  TASK_TIME
   PIT1_start_count();
+#endif  //TASK_TIME
+  
   /*
   static uint8 group = 0;
   
@@ -356,34 +413,74 @@ SUBTASK_CASE SUBTASK_STATUS1:
     SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS0;
   }
   */
+  ;     //此句是为了消除 Warning[Pe1072]: a declaration cannot have a label     
+  static float dx, dy, /*x, y,*/ theta, theta_xhat, theta_yhat;
   
-  static float dx, dy, x, y, theta;
-  
-  dx = 0.034f * t4wft2_can_xUART.int16_val;
-  dy = 0.034f * t4wft3_can_yUART.int16_val;
-  
-  x = dx / (2*_L) / InvSqrt(((_L*_L - dy*dy) * (_L*_L + dy*dy - dx*dx)) / (_L*_L - dx*dx -dy*dy));
-  y = dy / (2*_L) / InvSqrt(((_L*_L - dx*dx) * (_L*_L + dx*dx - dy*dy)) / (_L*_L - dx*dx -dy*dy));
-  
-  theta = atan2(y, x);
-  if (theta > 3.13 || theta < -3.13)
+  if (t4wft2_can_xUART.int16_val == 0) {
+    if (t4wft3_can_yUART.int16_val > 0)
+      theta = PI/2;
+    else
+      theta = -PI/2;
+  }
+    
+  else if (t4wft3_can_yUART.int16_val == 0) {
     if (t4wft2_can_xUART.int16_val > 0)
       theta = 0;
     else
       theta = PI;
-  
-  //通讯部分
-  if (t4tst8_car_stop.flag == 1) {
-    t8wft4_theta.float_val = theta;
-    t8wft4_theta.int16_val ++;    //theta生成计数
+  }
+    
+  else {
+    dx = 0.034f * t4wft2_can_xUART.int16_val;
+    dy = 0.034f * t4wft3_can_yUART.int16_val;
+    
+    if (dy > 0)
+      theta_xhat = acos(dx/_L);
+    else
+      theta_xhat = -acos(dx/_L);
+    
+    if (dx < 0)
+      if (dy > 0)
+        theta_yhat = PI/2 + acos(dy/_L);
+      else
+        theta_yhat = -3*PI/2 + acos(dy/_L);
+    else
+      theta_yhat =PI/2 - acos(dy/_L);
+    
+    theta = (theta_xhat + theta_yhat) / 2;
   }
   
-  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, (int16_t)(x * 100), (int16_t)(y * 100), (int16_t)(theta * 100), 0, 0, 0);
+  
+/*  
+  x = dx / (2*_L) / InvSqrt(((_L*_L - dy*dy) * (_L*_L + dy*dy - dx*dx)) / (_L*_L - dx*dx -dy*dy));
+  y = dy / (2*_L) / InvSqrt(((_L*_L - dx*dx) * (_L*_L + dx*dx - dy*dy)) / (_L*_L - dx*dx -dy*dy));
+  
+  theta = atan2(y, x);
+  if (theta > 3.13f || theta < -3.13f)
+    if (t4wft2_can_xUART.int16_val > 0)
+      theta = 0;
+    else
+      theta = PI;
+*/
+  
+  //通讯部分
+  if (car_status == CAR_STOP) {
+    t8wft4_theta.float_val = theta;
+    t8wft4_theta.int16_val ++;    //theta生成计数
+    
+    LED_OFF(1);         //用于测试
+  }
+  
+  //**ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, (int16_t)(x * 100), (int16_t)(y * 100), (int16_t)(theta * 100), 0, 0, 0);              //仅用于测试
+  ANO_DT_send_int16(t4wft2_can_xUART.int16_val, t4wft3_can_yUART.int16_val, (int16_t)(theta * 100), 0, 0, 0, 0, 0);          
   
   t4wft2_can_xUART.flag = 0;
   t4wft3_can_yUART.flag = 0;
   
+#ifdef  TASK_TIME
   printf("task4_subtask1 running time: %u.\n", PIT1_get_time());
+#endif  //TASK_TIME
+  
 SUBTASK_BREAK  
   
   
@@ -398,8 +495,10 @@ SUBTASK_END
 void task8_entry(void *arg)
 {
   static float theta_mean = 0;         //在进入停车状态前记得清零
-  static const int8_t sum_time = 8;           //theta累加次数
-  static uint8_t car_run_last_time = 10;        //开车时间，car_run_last_time * TASK_RHYTHM_T
+  static const int8_t sum_time = 10;           //theta累加次数
+  static const uint8_t k_car_run_last_time = 12;
+  static uint8_t car_run_last_time;        //开车时间，car_run_last_time * TASK_RHYTHM_T
+  
   
 CREAT_SUBTASK
 SUBTASK_BEGIN
@@ -407,14 +506,16 @@ SUBTASK_BEGIN
 //停车，确定方位
 SUBTASK_CASE SUBTASK_STATUS0:
   
-  theta_mean += t8wft4_theta.float_val;
+  if (car_status == CAR_STOP) 
+    theta_mean += ((float)t8wft4_theta.int16_val / ((sum_time - 1) * sum_time / 2) * t8wft4_theta.float_val);      //越往后的数据越可靠，权重越大。记得进行类型提升（加float）！！
   if (t8wft4_theta.int16_val == sum_time) {
     t8wft4_theta.int16_val = 0;         //theta 计数清零
     
-    LED_OFF(1);         //用于测试
-    t4tst8_car_stop.flag = 0;                //即将进入运动状态
+    car_status = CAR_RUN;                //即将进入运动状态
     
-    theta_mean /= sum_time;
+    //theta_mean /= sum_time;
+    
+    //ANO_DT_send_int16((int16_t)(100 * theta_mean), 0, 0, 0, 0, 0, 0, 0);        //仅用于测试
     
     SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS1;
   }
@@ -438,7 +539,7 @@ SUBTASK_CASE SUBTASK_STATUS1:
   for (int i = 0; i < 4; i++)
     pid[i].SetSpeed = wheel_v[i];
   
-  car_run_last_time = 10;        //20 * TASK_RHYTHM_T
+  car_run_last_time = k_car_run_last_time;        //k_car_run_last_time * TASK_RHYTHM_T
   
   SUBTASK_STATUS_CHANGE_TO SUBTASK_STATUS2;
   SUBTASK_BREAK
@@ -450,7 +551,7 @@ SUBTASK_CASE SUBTASK_STATUS2:
   if (!(--car_run_last_time)) {
     car_stop();
     
-    t4tst8_car_stop.flag = 1;
+    car_status = CAR_STOP;
     
     theta_mean = 0;
     

@@ -5,7 +5,7 @@
 #define fft 1
 #define ifft 0
 #define _N 4096
-#define _L 0.27f    //用于音速辨识的两个麦克风距离
+#define _L 0.274f    //用于音速辨识的两个麦克风距离
 #define TIMES 50        //音速辨识时重复测量次数
 #define DELTA_TIME 1e-4f
 

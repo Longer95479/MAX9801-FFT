@@ -73,3 +73,24 @@ PID_EXT pid_t pid[4];
 
 
 
+#ifdef  MOTOR_GLOBALS
+#define MOTOR_EXT
+#else
+#define MOTOR_EXT extern
+#endif  //MOTOR_GLOBALS
+/**
+ * @brief       车体运动状态
+ */
+typedef enum {
+  CAR_STOP,
+  CAR_RUN,
+  CAR_BACK_ROUND
+} car_status_t;
+
+/**
+ * @brief       车体运动状态变量
+ */
+MOTOR_EXT car_status_t car_status;
+
+
+
