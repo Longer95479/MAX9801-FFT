@@ -2090,6 +2090,9 @@
             <name>$PROJ_DIR$\..\Board\soc\ADC&amp;DMA.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Board\soc\AHRS.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Board\soc\ANO_DT.c</name>
         </file>
         <file>
@@ -2103,6 +2106,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Board\soc\LQ_LED.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Board\soc\LQ_MPU6050.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Board\soc\OPENMV.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Board\soc\PID.c</name>

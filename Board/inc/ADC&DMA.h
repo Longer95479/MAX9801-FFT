@@ -86,4 +86,17 @@ void data_type_trans(type_complex sample[]);
  */
 void data_reprocess(type_complex sample_s[], type_complex sample_d[]);
 
+
+/**
+ * @brief       把采集的数据位置重新分配，用于FFT运算
+ * @param       sample_s：数据全部存放在此数组
+ *              sample_d：相应的数据应该转移到此数组的实部
+ * @return
+ * @example
+ * @note        本次转换没有对移动的数据进行翻转
+ *
+ */
+void data_reprocess_no_overturn(type_complex sample_s[], type_complex sample_d[]);
+
+
 #endif

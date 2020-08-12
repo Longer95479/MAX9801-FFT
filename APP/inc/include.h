@@ -46,7 +46,7 @@
 //#include "LQ_WDOG.h"               /* WDOG        例子 */
 //#include "LQ_SD5.h"                /* 舵机        例子 */
 //#include "LQ_MOTOR.h"              /* 电机        例子 */
-//#include "LQ_MPU6050.h"            /* 6050        例子 */
+#include "LQ_MPU6050.h"            /* 6050        例子 */
 //#include "LQ_9AX.h"                /* 九轴        例子 */
 //#include "LQ_OV7725.h"             /* 7725        驱动 */
 //#include "LQ_CAMERA_OV7725.h"      /* 摄像头      例子 */
@@ -72,6 +72,8 @@
 #include "ADC&DMA.h"
 #include "task_scheduler.h"
 #include "PID.h"
+#include "AHRS.h"
+#include "OPENMV.h"
 
 
 #endif

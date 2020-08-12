@@ -170,7 +170,7 @@ void data_type_trans(type_complex sample[])
  *              sample_d：相应的数据应该转移到此数组的实部
  * @return
  * @example
- * @note
+ * @note        对移动的数据进行翻转存储
  *
  */
 void data_reprocess(type_complex sample_s[], type_complex sample_d[])
@@ -178,6 +178,33 @@ void data_reprocess(type_complex sample_s[], type_complex sample_d[])
   
   for (int i = 0; i < _N/2; i++) {
     sample_d[_N/2-i-1].re = sample_s[i].im;
+    sample_d[i].im = 0;
+    sample_s[i].im = 0;
+  }
+  
+  for (int i = _N/2; i < _N; i++) {
+    sample_s[i].re = 0;
+    sample_s[i].im = 0;
+    sample_d[i].re = 0;
+    sample_d[i].im = 0;
+  }
+}
+
+
+/**
+ * @brief       把采集的数据位置重新分配，用于FFT运算
+ * @param       sample_s：数据全部存放在此数组
+ *              sample_d：相应的数据应该转移到此数组的实部
+ * @return
+ * @example
+ * @note        本次转换没有对移动的数据进行翻转
+ *
+ */
+void data_reprocess_no_overturn(type_complex sample_s[], type_complex sample_d[])
+{
+  
+  for (int i = 0; i < _N/2; i++) {
+    sample_d[i].re = sample_s[i].im;
     sample_d[i].im = 0;
     sample_s[i].im = 0;
   }

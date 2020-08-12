@@ -84,6 +84,7 @@ void PIT0_IRQHandler()
     PIT_Flag_Clear(PIT0);       //清中断标志位
     
     task_rhythm();
+    task_process();
     
 }
 /*---------------------------------------------------------------
@@ -109,7 +110,8 @@ void PIT2_IRQHandler()
 {
     PIT_Flag_Clear(PIT2);       //清中断标志位
     
-    get_speed_and_control();
+    PID_four_wheels_speed_control();
+    car_go();
     
 }
 /*---------------------------------------------------------------
@@ -256,14 +258,25 @@ void UART4_RX_TX_IRQHandler(void)
         //用户需要处理接收数据
         LED_Reverse(1);
         
-        char buffer[17];
+        char buffer[34];
         
-        UART_GetStr(UART4, buffer, 17);
+        UART_GetStr(UART4, buffer, 34);
         
         pid_param_adjust(buffer);
     }
     
 }
+
+
+/**
+ * @brief       串口2中断，用于接收 Openmv 的数据
+ */
+void UART2_RX_TX_IRQHandler(void)
+{
+   recieve_decouder(UART_GetChar(UART2));
+}
+
+
 
 /**
  * @brief       测试 LPTMR 中断

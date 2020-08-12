@@ -82,6 +82,89 @@ void ANO_DT_send_int16(short data1, short data2, short data3, short data4, short
 	ANO_DT_Send_Data(data_to_send, _cnt);
 }
 
+
+/**
+ * @brief       发送加速度和角速度
+ * @param        ACC_X   ACC_Y   ACC_Z   GYRO_X  GYRO_Y  GYRO_Z
+ */
+void ANO_DT_send_senser_int16(short data1, short data2, short data3, short data4, short data5, short data6, short data7, short data8 ,short data9/*, short data8, short .....可根据需要自行添加 */)
+{
+    uint8_t _cnt=0;
+    data_to_send[_cnt++] = 0xAA;      //匿名协议帧头  0xAAAA
+	data_to_send[_cnt++] = 0xAA;
+	data_to_send[_cnt++] = 0x02;      //使用传感器协议帧0x02  
+    data_to_send[_cnt++] = 18;        //9个short 长度 18个字节
+    
+	data_to_send[_cnt++]=BYTE1(data1);
+	data_to_send[_cnt++]=BYTE0(data1);
+
+	data_to_send[_cnt++]=BYTE1(data2);
+	data_to_send[_cnt++]=BYTE0(data2);
+
+	data_to_send[_cnt++]=BYTE1(data3);
+	data_to_send[_cnt++]=BYTE0(data3);
+    
+        data_to_send[_cnt++]=BYTE1(data4);
+	data_to_send[_cnt++]=BYTE0(data4);
+
+	data_to_send[_cnt++]=BYTE1(data5);
+	data_to_send[_cnt++]=BYTE0(data5);
+
+	data_to_send[_cnt++]=BYTE1(data6);
+	data_to_send[_cnt++]=BYTE0(data6);
+    
+         data_to_send[_cnt++]=BYTE1(data7);
+	data_to_send[_cnt++]=BYTE0(data7);
+
+	data_to_send[_cnt++]=BYTE1(data8);
+	data_to_send[_cnt++]=BYTE0(data8);
+        
+        data_to_send[_cnt++]=BYTE1(data9);
+	data_to_send[_cnt++]=BYTE0(data9);
+    
+    /*,short data7, short data8, short .....可根据需要自行添加 */
+    
+        uint8_t sum = 0;
+	for(uint8_t i=0;i<_cnt;i++)
+		sum += data_to_send[i];
+	data_to_send[_cnt++]=sum;
+	
+	ANO_DT_Send_Data(data_to_send, _cnt);
+}
+
+
+/**
+ * @brief       发送欧拉角
+ * @param       ROL*100         PIT*100         YAW*100        
+ */
+void ANO_DT_send_status_int16(short data1, short data2, short data3)
+{
+    uint8_t _cnt=0;
+    data_to_send[_cnt++] = 0xAA;      //匿名协议帧头  0xAAAA
+	data_to_send[_cnt++] = 0xAA;
+	data_to_send[_cnt++] = 0x01;      //使用传感器协议帧0x02  
+    data_to_send[_cnt++] = 6;        //3个short 长度 6个字节
+    
+	data_to_send[_cnt++]=BYTE1(data1);
+	data_to_send[_cnt++]=BYTE0(data1);
+
+	data_to_send[_cnt++]=BYTE1(data2);
+	data_to_send[_cnt++]=BYTE0(data2);
+
+	data_to_send[_cnt++]=BYTE1(data3);
+	data_to_send[_cnt++]=BYTE0(data3);
+    
+    /*,short data7, short data8, short .....可根据需要自行添加 */
+    
+        uint8_t sum = 0;
+	for(uint8_t i=0;i<_cnt;i++)
+		sum += data_to_send[i];
+	data_to_send[_cnt++]=sum;
+	
+	ANO_DT_Send_Data(data_to_send, _cnt);
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 ////Data_Receive_Prepare函数是协议预解析，根据协议的格式，将收到的数据进行一次格式性解析，格式正确的话再进行数据解析
 ////移植时，此函数应由用户根据自身使用的通信方式自行调用，比如串口每收到一字节数据，则调用此函数一次

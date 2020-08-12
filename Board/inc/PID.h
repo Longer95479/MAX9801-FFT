@@ -25,6 +25,14 @@ float PID_realize(float speed, pid_t *pid);
 
 
 /**
+ * @brief       四个轮的pid控制
+ * @note        耦合了平动和旋转
+ * 
+ */
+void PID_four_wheels_speed_control(void);
+
+
+/**
  * @brief       pid参数调节，用于测试
  * @param       buffer[]: 来自上位机特殊格式的字符，用于更改pid参数和速度目标值
  * @return

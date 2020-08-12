@@ -3,8 +3,8 @@
 
 
 
-#define MPU6050_ADDR  0xD0  //IIC写入时的地址字节数据，+1为读取
-#define MPU6050_ID	  0x68	//IIC地址寄存器(默认数值0x68，只读)
+#define MPU6050_ADDR  0xD2  //IIC写入时的地址字节数据，+1为读取
+#define MPU6050_ID	  0x12	//IIC地址寄存器(默认数值0x68，只读)
 //****************************************
 // 定义MPU6050内部地址
 //****************************************
@@ -57,6 +57,9 @@
 #define MPU_FIFO_CNTL_REG		0X73	//FIFO计数寄存器低八位
 #define MPU_FIFO_RW_REG			0X74	//FIFO读写寄存器
 #define WHO_AM_I		        0X75	//器件ID寄存器
+
+
+
 extern void Test_MPU6050(void);
 uint8_t MPU6050_Init(void);
 uint8_t MPU_WaitForReady(uint8_t devaddr);

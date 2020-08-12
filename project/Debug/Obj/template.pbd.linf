@@ -1,5 +1,6 @@
 ﻿D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\template.pbd
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\ADC&DMA.pbi
+D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\AHRS.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\ANO_DT.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\FFT.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\fsl_clock.pbi
@@ -8,6 +9,7 @@ D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\IRQ_Handler.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\LG_EncTPM.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\Longer_motor.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\LQ_LED.pbi
+D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\LQ_MPU6050.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\main.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\MK60_ADC.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\MK60_CMT.pbi
@@ -23,6 +25,7 @@ D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\MK60_SYSTICK.pb
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\MK60_UART.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\MK60_WDOG.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\MK66_TPM.pbi
+D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\OPENMV.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\PID.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\Slide_average_filter.pbi
 D:\Longer\智能车赛\my_programs\MAX&FFT_K66\project\Debug\Obj\start.pbi

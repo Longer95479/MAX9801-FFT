@@ -1,10 +1,6 @@
 #ifndef TASK_SCHEDULER_H
 #define TASK_SCHEDULER_H
 
-/**
- * @brief       节拍中断周期
- */
-#define TASK_RHYTHM_T   75      //70ms 进一次中断作为任务节拍
 
 /**
  * @brief       子任务控制流程宏定义

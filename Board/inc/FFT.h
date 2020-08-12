@@ -51,6 +51,20 @@ float InvSqrt(float x);
  */
 int midst_filter(int16 max_now, int16 max_queue_ori[], int8 N);
 
+
+/**
+ * @brief       浮点数中位数滤波
+ * @param        max_now: 新计算出的互相关最大值索引
+ *                max_queue_ori[]: 历史索引，存放在此队列内
+ *                N: 队列长度
+ *
+ * @return      max_queue[(N - 1)/2]: 
+ * @example     
+ * @note        用于对互相关结果的最大值索引 max  进行滤波
+ *
+ */
+float f_midst_filter(float max_now, float max_queue_ori[], int8 N);
+
 static void inver(type_complex x[],int N);
 void FFT(type_complex x[], const type_complex *Wnk, int N);
 void NIFFT(type_complex x[], const type_complex *Wnk, int N);
@@ -67,9 +81,45 @@ void IFFT(type_complex x[], const type_complex *Wnk, int N);
  */
 void low_pass_filter(type_complex sample[]);
 void sample_get(void);
-void amplitude_and_mean_process(type_complex sample[]);
+float amplitude_and_mean_process(type_complex sample[]);
 void xcorr(type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft/*, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s*/);
 float V_sound_Identification(type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft/*, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s*/);
-float distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft/*, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s*/);
+int16_t distance_difference(float V_sound, type_complex sample_d[], type_complex sample_s[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft/*, ADCn_Ch_e ADC_CH_d, ADCn_Ch_e ADC_CH_s, ADC_Type * ADC_d, ADC_Type * ADC_s*/);
+
+/**
+ * @brief       计算得到 theta 
+ *
+ */
+float get_theta(int8_t max_x, int8_t max_y);
+
+/**
+ * @brief       互相关运算2
+ * @param        sample[]: 一组信号
+ *                z[]: 用于存储互相关结果
+ *                Wnk_fft: fft的旋转因子
+ *                Wnk_ifft: ifft的旋转因子
+ * @return
+ * @example
+ * @note        r_d - r_s, 相当于 sample[] 不动，对 ref_chirp[] 进行平移
+ *
+ */
+void xcorr2(type_complex sample[] ,type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft);
+
+
+/**
+ * @brief       TDOA2
+ * @param        sample[]: 一组信号
+ *                z[]: 用于存储互相关结果
+ *                Wnk_fft: fft的旋转因子
+ *                Wnk_ifft: ifft的旋转因子
+ *
+ * @return      假想距离的格数
+ * @example
+ * @note        r_d - r_s, 相当于 sample_s[] 不动，对 ref_chirp[] 进行平移
+ *              得到的是假想的绝对距离
+ *
+ */
+int16_t distance_difference2(type_complex sample[], type_complex z[], const type_complex *Wnk_fft, const type_complex *Wnk_ifft);
+
 
 #endif

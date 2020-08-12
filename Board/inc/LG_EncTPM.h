@@ -17,13 +17,13 @@ int8_t pin_turn(void);
 
 
 /**
-* @brief       在PIT中断中采集速度（和调整速度）
+* @brief       在PIT中断中采集速度 和 设置平动的四轮速度
 * @param
 * @return
 * @example
 * @note        放在 PIT2 中断里
 * 
 */
-void get_speed_and_control(void);
+void get_speed_and_set_translation_speed(void);
 
 #endif
